@@ -273,7 +273,7 @@ namespace Ched.UI
         protected void ExportFile()
         {
             CommitChanges();
-            var dialog = new ExportForm(ScoreBook);
+            var dialog = new SusExportForm(ScoreBook);
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 LastExportData = new ExportData() { OutputPath = dialog.OutputPath, Exporter = dialog.Exporter };

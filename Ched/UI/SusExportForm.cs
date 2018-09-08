@@ -13,7 +13,7 @@ using Ched.Components.Exporter;
 
 namespace Ched.UI
 {
-    public partial class ExportForm : Form
+    public partial class SusExportForm : Form
     {
         private readonly string ArgsKey = "sus";
         private readonly string Filter = "Seaurchin Score File(*.sus)|*.sus";
@@ -28,7 +28,7 @@ namespace Ched.UI
 
         public IExporter Exporter { get { return exporter; } }
 
-        public ExportForm(ScoreBook book)
+        public SusExportForm(ScoreBook book)
         {
             InitializeComponent();
             Icon = Properties.Resources.MainIcon;

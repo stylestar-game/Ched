@@ -1,6 +1,6 @@
 ﻿namespace Ched.UI
 {
-    partial class ExportForm
+    partial class SusExportForm
     {
         /// <summary>
         /// Required designer variable.
@@ -273,7 +273,7 @@
             this.hasPaddingBarBox.Text = "先頭に1小節の空白を挿入する";
             this.hasPaddingBarBox.UseVisualStyleBackColor = true;
             // 
-            // ExportForm
+            // SusExportForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -305,7 +305,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "ExportForm";
+            this.Name = "SusExportForm";
             this.Text = "エクスポート";
             ((System.ComponentModel.ISupportInitialize)(this.soundOffsetBox)).EndInit();
             this.ResumeLayout(false);
