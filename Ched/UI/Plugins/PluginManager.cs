@@ -14,6 +14,11 @@ namespace Ched.UI.Plugins
 {
     public class PluginManager
     {
+        [ImportMany]
+        private IEnumerable<Exporter.IExportablePlugin> exportablePlugins = Enumerable.Empty<Exporter.IExportablePlugin>();
+
+        public IEnumerable<Exporter.IExportablePlugin> ExportablePlugins => exportablePlugins;
+
         private PluginManager()
         {
         }
