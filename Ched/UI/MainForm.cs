@@ -38,6 +38,8 @@ namespace Ched.UI
         private SoundPreviewManager PreviewManager { get; }
         private SoundSource CurrentMusicSource;
 
+        private Plugins.PluginManager PluginManager { get; } = Plugins.PluginManager.GetInstance();
+
         private bool IsPreviewMode
         {
             get { return isPreviewMode; }
@@ -270,16 +272,6 @@ namespace Ched.UI
             OperationManager.CommitChanges();
         }
 
-        protected void ExportFile()
-        {
-            CommitChanges();
-            var dialog = new SusExportForm(ScoreBook);
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                LastExportData = new ExportData() { OutputPath = dialog.OutputPath, Exporter = dialog.Exporter };
-            }
-        }
-
         protected void CommitChanges()
         {
             ScoreBook.Score.Notes = NoteView.Notes.Reposit();
@@ -324,13 +316,30 @@ namespace Ched.UI
                 }
             });
 
+            var exportMenuItems = PluginManager.ExportablePlugins.Select(p => new MenuItem(p.DisplayName, (s, e) =>
+            {
+                CommitChanges();
+                if (p.GetForm(ScoreBook).ShowDialog(this) != DialogResult.OK) return;
+                var dialog = new SaveFileDialog() { Filter = p.Filter };
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    p.Exporter.Export(dialog.FileName, ScoreBook);
+                    LastExportData = new ExportData() { OutputPath = dialog.FileName, Exporter = p.Exporter };
+                }
+            })).ToArray();
+            var exportMenuItem = new MenuItem("エクスポート", exportMenuItems)
+            {
+                Enabled = exportMenuItems.Length > 0
+            };
+
+
             var fileMenuItems = new MenuItem[]
             {
                 new MenuItem("新規作成(&N)", (s, e) => ClearFile()) { Shortcut = Shortcut.CtrlN },
                 new MenuItem("開く(&O)", (s, e) => OpenFile()) { Shortcut = Shortcut.CtrlO },
                 new MenuItem("上書き保存(&S)", (s, e) => SaveFile()) { Shortcut = Shortcut.CtrlS },
                 new MenuItem("名前を付けて保存(&A)", (s, e) => SaveAs()) { Shortcut = Shortcut.CtrlShiftS },
-                new MenuItem("エクスポート", (s, e) => ExportFile()),
+                exportMenuItem,
                 new MenuItem("-"),
                 bookPropertiesMenuItem,
                 new MenuItem("-"),
@@ -587,7 +596,7 @@ namespace Ched.UI
             {
                 if (LastExportData == null)
                 {
-                    ExportFile();
+                    MessageBox.Show(this, "エクスポートが行われていません。", Program.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
