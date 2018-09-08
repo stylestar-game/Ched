@@ -195,6 +195,7 @@
     <Compile Include="UI\Plugins\IExportablePlugin.cs" />
     <Compile Include="UI\Plugins\IPlugin.cs" />
     <Compile Include="UI\Plugins\PluginManager.cs" />
+    <Compile Include="UI\Plugins\SusExporterPlugin.cs" />
     <Compile Include="UI\SoundConfiguration.cs" />
     <Compile Include="UI\SoundManager.cs" />
     <Compile Include="UI\SoundPreviewManager.cs" />

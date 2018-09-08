@@ -15,20 +15,9 @@ namespace Ched.UI
 {
     public partial class SusExportForm : Form
     {
-        private readonly string ArgsKey = "sus";
         private readonly string Filter = "Seaurchin Score File(*.sus)|*.sus";
 
-        private SusExporter exporter = new SusExporter();
-
-        public string OutputPath
-        {
-            get { return outputBox.Text; }
-            set { outputBox.Text = value; }
-        }
-
-        public IExporter Exporter { get { return exporter; } }
-
-        public SusExportForm(ScoreBook book)
+        public SusExportForm(ScoreBook book, SusExporter exporter)
         {
             InitializeComponent();
             Icon = Properties.Resources.MainIcon;
@@ -37,12 +26,7 @@ namespace Ched.UI
             levelDropDown.Items.AddRange(Enumerable.Range(1, 14).SelectMany(p => new string[] { p.ToString(), p + "+" }).ToArray());
             difficultyDropDown.Items.AddRange(new string[] { "BASIC", "ADVANCED", "EXPERT", "MASTER", "WORLD'S END" });
 
-            if (!book.ExporterArgs.ContainsKey(ArgsKey) || !(book.ExporterArgs[ArgsKey] is SusArgs))
-            {
-                book.ExporterArgs[ArgsKey] = new SusArgs();
-            }
-
-            var args = book.ExporterArgs[ArgsKey] as SusArgs;
+            var args = exporter.CustomArgs;
 
             titleBox.Text = book.Title;
             artistBox.Text = book.ArtistName;
@@ -69,12 +53,6 @@ namespace Ched.UI
 
             exportButton.Click += (s, e) =>
             {
-                if (string.IsNullOrEmpty(OutputPath)) browseButton.PerformClick();
-                if (string.IsNullOrEmpty(OutputPath))
-                {
-                    MessageBox.Show(this, "出力先を指定してください。", Program.ApplicationName);
-                    return;
-                }
                 book.Title = titleBox.Text;
                 book.ArtistName = artistBox.Text;
                 book.NotesDesignerName = notesDesignerBox.Text;
@@ -86,18 +64,8 @@ namespace Ched.UI
                 args.JacketFilePath = jacketFileBox.Text;
                 args.HasPaddingBar = hasPaddingBarBox.Checked;
 
-                try
-                {
-                    exporter.CustomArgs = args;
-                    exporter.Export(OutputPath, book);
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, "エクスポートに失敗しました。", Program.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Program.DumpException(ex);
-                }
+                DialogResult = DialogResult.OK;
+                Close();
             };
         }
     }
