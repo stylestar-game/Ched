@@ -36,7 +36,7 @@ namespace Ched.Components
         [Newtonsoft.Json.JsonProperty]
         private Score score = new Score();
         [Newtonsoft.Json.JsonProperty]
-        private Dictionary<string, object> exporterArgs = new Dictionary<string, object>();
+        private ScoreBookMetadata metadata = new ScoreBookMetadata();
 
         public string Path { get; set; }
 
@@ -86,12 +86,12 @@ namespace Ched.Components
         }
 
         /// <summary>
-        /// エクスポート用の設定を格納します。
+        /// この<see cref="ScoreBook"/>に関連付けられるメタデータを設定します。
         /// </summary>
-        public Dictionary<string, object> ExporterArgs
+        public ScoreBookMetadata Metadata
         {
-            get { return exporterArgs; }
-            set { exporterArgs = value; }
+            get { return metadata; }
+            set { metadata = value; }
         }
 
         public void Save(string path)
@@ -135,6 +135,21 @@ namespace Ched.Components
                     slide["startWidth"] = obj.Property("width").Value;
                     obj.Property("width").Remove();
                 }
+            }
+
+            if (fileVersion.Major < 3)
+            {
+                var metadata = JObject.FromObject(new ScoreBookMetadata());
+                if (doc["exporterArgs"] != null)
+                {
+                    var args = doc["exporterArgs"]["sus"];
+                    if (args != null)
+                    {
+                        metadata["exporterArgs"]["Ched.UI.Plugins.SusExporterPlugin"] = args.ToString();
+                    }
+                    doc.Remove("exporterArgs");
+                }
+                doc.Add("metadata", metadata);
             }
 
             doc["version"] = JObject.FromObject(typeof(ScoreBook).Assembly.GetName().Version);

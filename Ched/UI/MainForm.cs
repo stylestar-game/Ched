@@ -319,12 +319,15 @@ namespace Ched.UI
             var exportMenuItems = PluginManager.ExportablePlugins.Select(p => new MenuItem(p.DisplayName, (s, e) =>
             {
                 CommitChanges();
+                if (ScoreBook.Metadata.ExporterArgs.ContainsKey(p.GetType().FullName))
+                    p.SetCustomData(ScoreBook.Metadata.ExporterArgs[p.GetType().FullName]);
                 if (p.GetForm(ScoreBook).ShowDialog(this) != DialogResult.OK) return;
                 var dialog = new SaveFileDialog() { Filter = p.Filter };
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
                     p.Exporter.Export(dialog.FileName, ScoreBook);
                     LastExportData = new ExportData() { OutputPath = dialog.FileName, Exporter = p.Exporter };
+                    ScoreBook.Metadata.ExporterArgs[p.GetType().FullName] = p.GetCustomData();
                 }
             })).ToArray();
             var exportMenuItem = new MenuItem("エクスポート", exportMenuItems)
