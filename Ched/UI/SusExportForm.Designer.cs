@@ -37,8 +37,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.browseButton = new System.Windows.Forms.Button();
-            this.label11 = new System.Windows.Forms.Label();
             this.soundOffsetBox = new System.Windows.Forms.NumericUpDown();
             this.titleBox = new System.Windows.Forms.TextBox();
             this.artistBox = new System.Windows.Forms.TextBox();
@@ -48,7 +46,6 @@
             this.songIdBox = new System.Windows.Forms.TextBox();
             this.soundFileBox = new System.Windows.Forms.TextBox();
             this.jacketFileBox = new System.Windows.Forms.TextBox();
-            this.outputBox = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.exportButton = new System.Windows.Forms.Button();
             this.hasPaddingBarBox = new System.Windows.Forms.CheckBox();
@@ -136,24 +133,6 @@
             this.label9.TabIndex = 8;
             this.label9.Text = "ジャケットファイル名";
             // 
-            // browseButton
-            // 
-            this.browseButton.Location = new System.Drawing.Point(305, 287);
-            this.browseButton.Name = "browseButton";
-            this.browseButton.Size = new System.Drawing.Size(75, 23);
-            this.browseButton.TabIndex = 25;
-            this.browseButton.Text = "参照";
-            this.browseButton.UseVisualStyleBackColor = true;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(14, 268);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(41, 12);
-            this.label11.TabIndex = 11;
-            this.label11.Text = "出力先";
-            // 
             // soundOffsetBox
             // 
             this.soundOffsetBox.DecimalPlaces = 3;
@@ -237,13 +216,6 @@
             this.jacketFileBox.Size = new System.Drawing.Size(178, 19);
             this.jacketFileBox.TabIndex = 22;
             // 
-            // outputBox
-            // 
-            this.outputBox.Location = new System.Drawing.Point(16, 289);
-            this.outputBox.Name = "outputBox";
-            this.outputBox.Size = new System.Drawing.Size(281, 19);
-            this.outputBox.TabIndex = 24;
-            // 
             // label12
             // 
             this.label12.AutoSize = true;
@@ -255,10 +227,9 @@
             // 
             // exportButton
             // 
-            this.exportButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.exportButton.Location = new System.Drawing.Point(16, 321);
+            this.exportButton.Location = new System.Drawing.Point(16, 275);
             this.exportButton.Name = "exportButton";
-            this.exportButton.Size = new System.Drawing.Size(364, 23);
+            this.exportButton.Size = new System.Drawing.Size(320, 23);
             this.exportButton.TabIndex = 26;
             this.exportButton.Text = "エクスポート";
             this.exportButton.UseVisualStyleBackColor = true;
@@ -277,11 +248,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(398, 356);
+            this.ClientSize = new System.Drawing.Size(354, 311);
             this.Controls.Add(this.hasPaddingBarBox);
             this.Controls.Add(this.exportButton);
             this.Controls.Add(this.label12);
-            this.Controls.Add(this.outputBox);
             this.Controls.Add(this.jacketFileBox);
             this.Controls.Add(this.soundFileBox);
             this.Controls.Add(this.songIdBox);
@@ -291,8 +261,6 @@
             this.Controls.Add(this.artistBox);
             this.Controls.Add(this.titleBox);
             this.Controls.Add(this.soundOffsetBox);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.browseButton);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
@@ -324,8 +292,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button browseButton;
-        private System.Windows.Forms.Label label11;
         private System.Windows.Forms.NumericUpDown soundOffsetBox;
         private System.Windows.Forms.TextBox titleBox;
         private System.Windows.Forms.TextBox artistBox;
@@ -335,7 +301,6 @@
         private System.Windows.Forms.TextBox songIdBox;
         private System.Windows.Forms.TextBox soundFileBox;
         private System.Windows.Forms.TextBox jacketFileBox;
-        private System.Windows.Forms.TextBox outputBox;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button exportButton;
         private System.Windows.Forms.CheckBox hasPaddingBarBox;

@@ -15,8 +15,6 @@ namespace Ched.UI
 {
     public partial class SusExportForm : Form
     {
-        private readonly string Filter = "Seaurchin Score File(*.sus)|*.sus";
-
         public SusExportForm(ScoreBook book, SusExporter exporter)
         {
             InitializeComponent();
@@ -38,18 +36,6 @@ namespace Ched.UI
             soundOffsetBox.Value = args.SoundOffset;
             jacketFileBox.Text = args.JacketFilePath;
             hasPaddingBarBox.Checked = args.HasPaddingBar;
-
-            browseButton.Click += (s, e) =>
-            {
-                var dialog = new SaveFileDialog()
-                {
-                    Filter = Filter
-                };
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    outputBox.Text = dialog.FileName;
-                }
-            };
 
             exportButton.Click += (s, e) =>
             {
