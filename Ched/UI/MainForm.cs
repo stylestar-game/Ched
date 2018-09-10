@@ -319,8 +319,8 @@ namespace Ched.UI
             var exportMenuItems = PluginManager.ExportablePlugins.Select(p => new MenuItem(p.DisplayName, (s, e) =>
             {
                 CommitChanges();
-                if (ScoreBook.Metadata.ExporterArgs.ContainsKey(p.GetType().FullName))
-                    p.SetCustomData(ScoreBook.Metadata.ExporterArgs[p.GetType().FullName]);
+                string args = ScoreBook.Metadata.ExporterArgs.ContainsKey(p.GetType().FullName) ? ScoreBook.Metadata.ExporterArgs[p.GetType().FullName] : "";
+                p.SetCustomData(args);
                 if (p.GetForm(ScoreBook).ShowDialog(this) != DialogResult.OK) return;
                 var dialog = new SaveFileDialog() { Filter = p.Filter };
                 if (dialog.ShowDialog(this) == DialogResult.OK)

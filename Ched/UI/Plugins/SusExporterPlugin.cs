@@ -32,7 +32,7 @@ namespace Ched.UI.Plugins.Exporter
 
         public void SetCustomData(string data)
         {
-            exporter.CustomArgs = JsonConvert.DeserializeObject<SusArgs>(data);
+            exporter.CustomArgs = string.IsNullOrEmpty(data) ? new SusArgs() : JsonConvert.DeserializeObject<SusArgs>(data);
         }
     }
 }
