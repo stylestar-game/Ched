@@ -26,7 +26,7 @@ namespace Ched.Components
         };
 
         [Newtonsoft.Json.JsonProperty]
-        private Version version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+        private Version version = typeof(ScoreBook).Assembly.GetName().Version;
         [Newtonsoft.Json.JsonProperty]
         private string title = "";
         [Newtonsoft.Json.JsonProperty]
@@ -137,7 +137,7 @@ namespace Ched.Components
                 }
             }
 
-            doc["version"] = JObject.FromObject(System.Reflection.Assembly.GetEntryAssembly().GetName().Version);
+            doc["version"] = JObject.FromObject(typeof(ScoreBook).Assembly.GetName().Version);
 
             var res = doc.ToObject<ScoreBook>(JsonSerializer.Create(SerializerSettings));
             // デシリアライズ時にリストを置き換えるのではなく各要素がAddされてるようなんですが
@@ -164,7 +164,7 @@ namespace Ched.Components
         /// <returns>互換性があればtrue, 互換性がなければfalse</returns>
         public static bool IsCompatible(string path)
         {
-            Version current = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+            Version current = typeof(ScoreBook).Assembly.GetName().Version;
             return GetFileVersion(path).Major <= current.Major;
         }
 
@@ -175,7 +175,7 @@ namespace Ched.Components
         /// <returns>読み込み可能であればtrue, 不可能であればfalse</returns>
         public static bool IsUpgradeNeeded(string path)
         {
-            Version current = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+            Version current = typeof(ScoreBook).Assembly.GetName().Version;
             return GetFileVersion(path).Major == current.Major;
         }
 
@@ -197,7 +197,7 @@ namespace Ched.Components
         private static Version GetFileVersion(string path)
         {
             var doc = JObject.Parse(GetDecompressedData(path));
-            Version current = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+            Version current = typeof(ScoreBook).Assembly.GetName().Version;
             return doc["version"].ToObject<Version>();
         }
     }
