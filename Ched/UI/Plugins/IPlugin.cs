@@ -17,5 +17,10 @@ namespace Ched.UI.Plugins
         /// プラグインの表示名を取得します。
         /// </summary>
         string DisplayName { get; }
+
+        /// <summary>
+        /// プラグインのバージョンを取得します。
+        /// </summary>
+        Version Version { get; }
     }
 }

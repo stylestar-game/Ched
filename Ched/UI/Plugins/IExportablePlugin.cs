@@ -42,6 +42,6 @@ namespace Ched.UI.Plugins.Exporter
         /// エクスポート時に利用する拡張データを設定します。
         /// </summary>
         /// <param name="data">独自データを表す文字列</param>
-        void SetCustomData(string data);
+        void SetCustomData(string data, Version dataVersion);
     }
 }

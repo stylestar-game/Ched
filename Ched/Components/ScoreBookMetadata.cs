@@ -12,15 +12,21 @@ namespace Ched.Components
     public class ScoreBookMetadata
     {
         [Newtonsoft.Json.JsonProperty]
-        private Dictionary<string, string> exporterArgs = new Dictionary<string, string>();
+        private Dictionary<string, ExporterArgsMetadata> exporterArgs = new Dictionary<string, ExporterArgsMetadata>();
 
         /// <summary>
         /// エクスポート用の設定を格納します。
         /// </summary>
-        public Dictionary<string, string> ExporterArgs
+        public Dictionary<string, ExporterArgsMetadata> ExporterArgs
         {
             get { return exporterArgs; }
             set { exporterArgs = value; }
         }
+    }
+
+    public class ExporterArgsMetadata
+    {
+        public Version Version { get; set; }
+        public string Value { get; set; }
     }
 }
