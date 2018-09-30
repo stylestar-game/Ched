@@ -1634,6 +1634,8 @@ namespace Ched.UI
                 slide.StartNote.Draw(pe.Graphics, GetRectFromNotePosition(slide.StartTick, slide.StartNote.LaneIndex, slide.StartWidth));
                 foreach (var step in slide.StepNotes.OrderBy(p => p.TickOffset))
                 {
+                    if (step.Tick < HeadTick) continue;
+                    if (step.Tick > tailTick) break;
                     if (!Editable && !step.IsVisible) continue;
                     if (Notes.GetReferencedAir(step).Count() > 0) break; // AIR付き終点
                     step.Draw(pe.Graphics, GetRectFromNotePosition(step.Tick, step.LaneIndex, step.Width));
