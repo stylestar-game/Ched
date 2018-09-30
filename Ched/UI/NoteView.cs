@@ -1577,8 +1577,13 @@ namespace Ched.UI
             {
                 var bg = new Slide.TapBase[] { slide.StartNote }.Concat(slide.StepNotes.OrderBy(p => p.Tick)).ToList();
                 var visibleSteps = new Slide.TapBase[] { slide.StartNote }.Concat(slide.StepNotes.Where(p => p.IsVisible).OrderBy(p => p.Tick)).ToList();
+                int visibleStepIndex = 0;
+                while (visibleStepIndex < visibleSteps.Count - 1 && visibleSteps[visibleStepIndex + 1].Tick < HeadTick) visibleStepIndex++;
+
                 for (int i = 0; i < bg.Count - 1; i++)
                 {
+                    if (bg[i + 1].Tick < HeadTick) continue;
+                    if (bg[i].Tick > tailTick) break;
                     slide.DrawBackground(pe.Graphics,
                         (UnitLaneWidth + BorderThickness) * bg[i].Width - BorderThickness,
                         (UnitLaneWidth + BorderThickness) * bg[i + 1].Width - BorderThickness,
@@ -1586,9 +1591,10 @@ namespace Ched.UI
                         GetYPositionFromTick(bg[i].Tick),
                         (UnitLaneWidth + BorderThickness) * bg[i + 1].LaneIndex,
                         GetYPositionFromTick(bg[i + 1].Tick) + 0.4f,
-                        GetYPositionFromTick(visibleSteps.Last(p => p.Tick <= bg[i].Tick).Tick),
-                        GetYPositionFromTick(visibleSteps.First(p => p.Tick >= bg[i + 1].Tick).Tick),
+                        GetYPositionFromTick(visibleSteps[visibleStepIndex].Tick),
+                        GetYPositionFromTick(visibleSteps[visibleStepIndex + 1].Tick),
                         ShortNoteHeight);
+                    if (bg[i + 1].Tick == visibleSteps[visibleStepIndex + 1].Tick) visibleStepIndex++;
                 }
             }
 
