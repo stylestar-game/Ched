@@ -45,6 +45,10 @@ namespace Ched.UI
         private NoteType newNoteType = NoteType.Tap;
         private AirDirection airDirection = new AirDirection(VerticalAirDirection.Up, HorizontalAirDirection.Center);
         private bool isNewSlideStepVisible = true;
+        // SSF
+        private Side noteSide = Side.Left;
+        private Direction noteDirection = Direction.Up;
+        // End SSF
 
         /// <summary>
         /// 小節の区切り線の色を設定します。
@@ -287,6 +291,28 @@ namespace Ched.UI
             }
         }
 
+        // SSF
+        public Side NoteSide
+        {
+            get { return noteSide; }
+            set
+            {
+                noteSide = value;
+                NewNoteTypeChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public Direction NoteDirection
+        {
+            get { return noteDirection; }
+            set
+            {
+                noteDirection = value;
+                NewNoteTypeChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        // End SSF
+
         /// <summary>
         /// 追加するAIRの方向を設定します。
         /// </summary>
@@ -352,7 +378,18 @@ namespace Ched.UI
                 AirDownColor = Color.FromArgb(192, 21, 216),
                 AirActionColor = new GradientColor(Color.FromArgb(146, 0, 192), Color.FromArgb(212, 92, 255)),
                 AirHoldLineColor = Color.FromArgb(216, 0, 196, 0),
-                AirStepColor = new GradientColor(Color.FromArgb(6, 180, 10), Color.FromArgb(80, 224, 64))
+                AirStepColor = new GradientColor(Color.FromArgb(6, 180, 10), Color.FromArgb(80, 224, 64)),
+
+                // SSF
+                StepLeftColor = new GradientColor(Color.FromArgb(254, 96, 0), Color.FromArgb(255, 253, 83)),
+                StepRightColor = new GradientColor(Color.FromArgb(0, 103, 255), Color.FromArgb(80, 242, 255)),
+                MotionUpColor = new GradientColor(Color.FromArgb(40, 174, 187), Color.FromArgb(88, 241, 254)),
+                MotionDownColor = new GradientColor(Color.FromArgb(197, 192, 68), Color.FromArgb(250, 244, 150)),
+                SlideStepLeftColor = new GradientColor(Color.FromArgb(254, 96, 0), Color.FromArgb(255, 253, 83)),
+                SlideStepLeftBackgroundColor = new GradientColor(Color.FromArgb(200, 199, 71, 14), Color.FromArgb(200, 247, 88, 4)),
+                SlideStepRightColor = new GradientColor(Color.FromArgb(0, 103, 255), Color.FromArgb(80, 242, 255)),
+                SlideStepRightBackgroundColor = new GradientColor(Color.FromArgb(200, 59, 105, 160), Color.FromArgb(200, 12, 156, 243))
+                // End SSF
             };
 
             var mouseDown = this.MouseDownAsObservable();
@@ -377,8 +414,21 @@ namespace Ched.UI
                         .Concat(Notes.ExTaps.Reverse())
                         .Concat(Notes.Taps.Reverse())
                         .Concat(Notes.Flicks.Reverse())
+                        .Concat(Notes.Steps.Reverse())      // SSF mod
                         .Where(q => visibleTick(q.Tick))
                         .Select(q => GetClickableRectFromNotePosition(q.Tick, q.LaneIndex, q.Width));
+
+                    // SSF
+                    var motionNotes = Enumerable.Empty<TappableBase>()
+                        .Concat(Notes.Motions.Reverse())
+                        .Where(q => visibleTick(q.Tick))
+                        .Select(q => GetClickableRectFromNotePosition(q.Tick, 0, 16));
+
+                    var slideSteps = Notes.SlideSteps.Reverse()
+                        .SelectMany(q => q.StepNotes.OrderByDescending(r => r.TickOffset).Concat(new LongNoteTapBase[] { q.StartNote }))
+                        .Where(q => visibleTick(q.Tick))
+                        .Select(q => GetClickableRectFromNotePosition(q.Tick, q.LaneIndex, q.Width));
+                    // End SSF
 
                     var slides = Notes.Slides.Reverse()
                         .SelectMany(q => q.StepNotes.OrderByDescending(r => r.TickOffset).Concat(new LongNoteTapBase[] { q.StartNote }))
@@ -392,7 +442,7 @@ namespace Ched.UI
                         return;
                     }
 
-                    foreach (RectangleF rect in shortNotes.Concat(slides))
+                    foreach (RectangleF rect in shortNotes.Concat(slides).Concat(slideSteps))   // SSF mod
                     {
                         if (!rect.Contains(pos)) continue;
                         RectangleF left = rect.GetLeftThumb(EdgeHitWidthRate, MinimumEdgeHitWidth);
@@ -400,6 +450,15 @@ namespace Ched.UI
                         Cursor = (left.Contains(pos) || right.Contains(pos)) ? Cursors.SizeWE : Cursors.SizeAll;
                         return;
                     }
+
+                    // SSF
+                    foreach (RectangleF rect in motionNotes)
+                    {
+                        if (!rect.Contains(pos)) continue;
+                        Cursor = Cursors.SizeAll;
+                        return;
+                    }
+                    // End SSF
 
                     foreach (var hold in Notes.Holds.Reverse())
                     {
@@ -596,6 +655,27 @@ namespace Ched.UI
 
                         return null;
                     };
+
+                    // SSF
+                    Func<MotionableBase, IObservable<MouseEventArgs>> motionHandler = note =>
+                    {
+                        RectangleF rect = GetClickableRectFromNotePosition(note.Tick, 0, 16);
+                        // ノート本体
+                        if (rect.Contains(scorePos))
+                        {
+                            var beforePos = new MoveShortNoteOperation.NotePosition(note.Tick, 0);
+                            return moveTappableNoteHandler(note)
+                                .Finally(() =>
+                                {
+                                    var afterPos = new MoveShortNoteOperation.NotePosition(note.Tick, 0);
+                                    if (beforePos == afterPos) return;
+                                    OperationManager.Push(new MoveShortNoteOperation(note, beforePos, afterPos));
+                                });
+                        }
+
+                        return null;
+                    };
+                    // End SSF
 
                     Func<Hold, IObservable<MouseEventArgs>> holdDurationHandler = hold =>
                     {
@@ -929,6 +1009,26 @@ namespace Ched.UI
                             if (subscription != null) return subscription;
                         }
 
+                        // SSF
+                        foreach (var note in Notes.Steps.Reverse().Where(q => q.Tick >= HeadTick && q.Tick <= tailTick))
+                        {
+                            var subscription = shortNoteHandler(note);
+                            if (subscription != null) return subscription;
+                        }
+
+                        foreach (var note in Notes.Motions.Reverse().Where(q => q.Tick >= HeadTick && q.Tick <= tailTick))
+                        {
+                            var subscription = motionHandler(note);
+                            if (subscription != null) return subscription;
+                        }
+
+                        foreach (var note in Notes.SlideSteps.Reverse().Where(q => q.StartTick <= tailTick && q.StartTick + q.GetDuration() >= HeadTick))
+                        {
+                            var subscription = slideHandler(note);
+                            if (subscription != null) return subscription;
+                        }
+                        // End SSF
+
                         return null;
                     };
 
@@ -1035,7 +1135,7 @@ namespace Ched.UI
                     }
 
                     // なんもねえなら追加だァ！
-                    if ((NoteType.Tap | NoteType.ExTap | NoteType.Flick | NoteType.Damage).HasFlag(NewNoteType))
+                    if ((NoteType.Tap | NoteType.ExTap | NoteType.Flick | NoteType.Damage | NoteType.Step).HasFlag(NewNoteType)) // SSF mod
                     {
                         TappableBase newNote = null;
                         IOperation op = null;
@@ -1068,6 +1168,15 @@ namespace Ched.UI
                                 newNote = damage;
                                 op = new InsertDamageOperation(Notes, damage);
                                 break;
+
+                            // SSF
+                            case NoteType.Step:
+                                var step = new Step() { Side = noteSide };
+                                Notes.Add(step);
+                                newNote = step;
+                                op = new InsertStepOperation(Notes, step);
+                                break;
+                            // End SSF
                         }
                         newNote.Width = LastWidth;
                         newNote.Tick = Math.Max(GetQuantizedTick(GetTickFromYPosition(scorePos.Y)), 0);
@@ -1151,10 +1260,145 @@ namespace Ched.UI
                                 Invalidate();
                                 return moveSlideStepNoteHandler(step)
                                     .Finally(() => OperationManager.Push(new InsertSlideOperation(Notes, slide)));
+
+                            // SSF
+                            case NoteType.Motion:
+                                var motion = new Motion()
+                                {
+                                    Tick = Math.Max(GetQuantizedTick(GetTickFromYPosition(scorePos.Y)), 0),
+                                    LaneIndex = 0,
+                                    Width = 16,
+                                    Direction = noteDirection
+                                };
+                                Notes.Add(motion);
+                                Invalidate();
+                                return moveTappableNoteHandler(motion)
+                                    .Finally(() => OperationManager.Push(new InsertMotionOperation(Notes, motion)));
+
+                                // TODO SSF
+                            case NoteType.SlideStep:
+                                // 中継点
+                                foreach (var note in Notes.SlideSteps.Reverse())
+                                {
+                                    var bg = new SlideStep.TapBase[] { note.StartNote }.Concat(note.StepNotes.OrderBy(q => q.Tick)).ToList();
+                                    for (int i = 0; i < bg.Count - 1; i++)
+                                    {
+                                        // 描画時のコードコピペつらい
+                                        var path = NoteGraphics.GetSlideBackgroundPath(
+                                            (UnitLaneWidth + BorderThickness) * bg[i].Width - BorderThickness,
+                                            (UnitLaneWidth + BorderThickness) * bg[i + 1].Width - BorderThickness,
+                                            (UnitLaneWidth + BorderThickness) * bg[i].LaneIndex,
+                                            GetYPositionFromTick(bg[i].Tick),
+                                            (UnitLaneWidth + BorderThickness) * bg[i + 1].LaneIndex,
+                                            GetYPositionFromTick(bg[i + 1].Tick));
+                                        if (path.PathPoints.ContainsPoint(scorePos))
+                                        {
+                                            int tickOffset = GetQuantizedTick(GetTickFromYPosition(scorePos.Y)) - note.StartTick;
+                                            // 同一Tickに追加させない
+                                            if (tickOffset != 0 && !note.StepNotes.Any(q => q.TickOffset == tickOffset))
+                                            {
+                                                int laneIndex = (int)(scorePos.X / (UnitLaneWidth + BorderThickness)) - note.StartWidth / 2;
+                                                laneIndex = Math.Min(Constants.LanesCount - note.StartWidth, Math.Max(0, laneIndex));
+                                                int laneIndexOffset = laneIndex - note.StartLaneIndex;
+                                                var newStep = new SlideStep.StepTap(note)
+                                                {
+                                                    TickOffset = tickOffset,
+                                                    LaneIndexOffset = laneIndexOffset,
+                                                    IsVisible = IsNewSlideStepVisible
+                                                };
+                                                note.StepNotes.Add(newStep);
+                                                Invalidate();
+                                                return moveSlideStepNoteHandler(newStep)
+                                                    .Finally(() => OperationManager.Push(new InsertSlideStepStepNoteOperation(note, newStep)));
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // 新規SLIDE
+                                var slideStep = new SlideStep()
+                                {
+                                    StartTick = Math.Max(GetQuantizedTick(GetTickFromYPosition(scorePos.Y)), 0),
+                                    StartWidth = LastWidth,
+                                    Side = noteSide
+                                };
+                                newNoteLaneIndex = (int)(scorePos.X / (UnitLaneWidth + BorderThickness)) - slideStep.StartWidth / 2;
+                                slideStep.StartLaneIndex = Math.Min(Constants.LanesCount - slideStep.StartWidth, Math.Max(0, newNoteLaneIndex));
+                                var stepStep = new SlideStep.StepTap(slideStep) { TickOffset = (int)QuantizeTick, IsVisible = false };
+                                slideStep.StepNotes.Add(stepStep);
+                                Notes.Add(slideStep);
+                                Invalidate();
+                                return moveSlideStepNoteHandler(stepStep)
+                                    .Finally(() => OperationManager.Push(new InsertSlideStepOperation(Notes, slideStep)));
+                                // End SSF
                         }
                     }
                     return Observable.Empty<MouseEventArgs>();
                 }).Subscribe(p => Invalidate());
+
+            // SSF
+            var editRightClickSubscription = mouseDown
+                .Where(p => Editable)
+                .Where(p => p.Button == MouseButtons.Right && EditMode == EditMode.Edit)
+                .SelectMany(p =>
+                {
+                    int tailTick = TailTick;
+                    var from = p.Location;
+                    Matrix matrix = GetDrawingMatrix(new Matrix());
+                    matrix.Invert();
+                    PointF scorePos = matrix.TransformPoint(p.Location);
+
+                    // そもそも描画領域外であれば何もしない
+                    RectangleF scoreRect = new RectangleF(0, GetYPositionFromTick(HeadTick), LaneWidth, GetYPositionFromTick(TailTick) - GetYPositionFromTick(HeadTick));
+                    if (!scoreRect.Contains(scorePos)) return Observable.Empty<MouseEventArgs>();
+
+                    Func<SlideStep.StepTap, IObservable<MouseEventArgs>> stepTriggerShuffle = step =>
+                    {
+                        return mouseMove.TakeUntil(mouseUp);
+                    };
+
+                    Func<SlideStep, IObservable<MouseEventArgs>> stepSlideHandler = slide =>
+                    {
+                        foreach (var step in slide.StepNotes.OrderByDescending(q => q.TickOffset))
+                        {
+                            RectangleF stepRect = GetClickableRectFromNotePosition(step.Tick, step.LaneIndex, step.Width);
+                            var stepWasShuffle = step.IsVisible;
+
+                            if (stepRect.Contains(scorePos))
+                            {
+                                return stepTriggerShuffle(step)
+                                    .Finally(() =>
+                                    {
+                                        step.IsVisible = !step.IsVisible;
+                                        Cursor.Current = Cursors.Default;
+                                        if (stepWasShuffle == step.IsVisible) return;
+                                        Invalidate();
+                                        OperationManager.Push(new StepSlideSwitchShuffleOperation(step));
+                                    });
+                            }
+                        }
+                        return null;
+                    };
+
+                    Func<IObservable<MouseEventArgs>> surfaceNotesHandler = () =>
+                    {
+                        foreach (var note in Notes.SlideSteps.Reverse().Where(q => q.StartTick <= tailTick && q.StartTick + q.GetDuration() >= HeadTick))
+                        {
+                            var subscription = stepSlideHandler(note);
+                            if (subscription != null) return subscription;
+                        }
+                        return null;
+                    };
+
+                    if(NoteType.SlideStep.HasFlag(NewNoteType))
+                    {
+                        var subscription = surfaceNotesHandler();
+                        if (subscription != null) return subscription;
+                    }
+
+                    return Observable.Empty<MouseEventArgs>();
+                }).Subscribe(p => Invalidate());
+            // End SSF
 
             Func<PointF, IObservable<MouseEventArgs>> rangeSelection = startPos =>
             {
@@ -1391,6 +1635,79 @@ namespace Ched.UI
                             return;
                         }
                     }
+
+                    // SSF
+                    foreach (var note in Notes.Steps.Reverse())
+                    {
+                        RectangleF rect = GetClickableRectFromNotePosition(note.Tick, note.LaneIndex, note.Width);
+                        if (rect.Contains(scorePos))
+                        {
+                            var airOp = removeReferencedAirs(note).ToList();
+                            var op = new RemoveStepOperation(Notes, note);
+                            Notes.Remove(note);
+                            if (airOp.Count > 0)
+                            {
+                                OperationManager.Push(new CompositeOperation(op.Description, new IOperation[] { op }.Concat(airOp)));
+                            }
+                            else
+                            {
+                                OperationManager.Push(op);
+                            }
+                            return;
+                        }
+                    }
+
+                    foreach (var note in Notes.Motions.Reverse())
+                    {
+                        RectangleF rect = GetClickableRectFromNotePosition(note.Tick, note.LaneIndex, note.Width);
+                        if (rect.Contains(scorePos))
+                        {
+                            var airOp = removeReferencedAirs(note).ToList();
+                            var op = new RemoveMotionOperation(Notes, note);
+                            Notes.Remove(note);
+                            if (airOp.Count > 0)
+                            {
+                                OperationManager.Push(new CompositeOperation(op.Description, new IOperation[] { op }.Concat(airOp)));
+                            }
+                            else
+                            {
+                                OperationManager.Push(op);
+                            }
+                            return;
+                        }
+                    }
+
+                    foreach (var slide in Notes.SlideSteps.Reverse())
+                    {
+                        foreach (var step in slide.StepNotes.OrderBy(q => q.TickOffset).Take(slide.StepNotes.Count - 1))
+                        {
+                            RectangleF rect = GetClickableRectFromNotePosition(step.Tick, step.LaneIndex, step.Width);
+                            if (rect.Contains(scorePos))
+                            {
+                                slide.StepNotes.Remove(step);
+                                OperationManager.Push(new RemoveSlideStepStepNoteOperation(slide, step));
+                                return;
+                            }
+                        }
+
+                        RectangleF startRect = GetClickableRectFromNotePosition(slide.StartTick, slide.StartLaneIndex, slide.StartWidth);
+                        if (startRect.Contains(scorePos))
+                        {
+                            var airOp = slide.StepNotes.SelectMany(q => removeReferencedAirs(q)).ToList();
+                            var op = new RemoveSlideStepOperation(Notes, slide);
+                            Notes.Remove(slide);
+                            if (airOp.Count > 0)
+                            {
+                                OperationManager.Push(new CompositeOperation(op.Description, new IOperation[] { op }.Concat(airOp)));
+                            }
+                            else
+                            {
+                                OperationManager.Push(op);
+                            }
+                            return;
+                        }
+                    }
+                    // End SSF
                 })
                 .Subscribe(p => Invalidate());
 
@@ -1414,7 +1731,7 @@ namespace Ched.UI
                         var selectedNotes = GetSelectedNotes();
                         var dicShortNotes = selectedNotes.GetShortNotes().ToDictionary(q => q, q => new MoveShortNoteOperation.NotePosition(q.Tick, q.LaneIndex));
                         var dicHolds = selectedNotes.Holds.ToDictionary(q => q, q => new MoveHoldOperation.NotePosition(q.StartTick, q.LaneIndex, q.Width));
-                        var dicSlides = selectedNotes.Slides.ToDictionary(q => q, q => new MoveSlideOperation.NotePosition(q.StartTick, q.StartLaneIndex, q.StartWidth));
+                        var dicSlides = selectedNotes.Slides.Concat(selectedNotes.SlideSteps).ToDictionary(q => q, q => new MoveSlideOperation.NotePosition(q.StartTick, q.StartLaneIndex, q.StartWidth)); // SSF mod
 
                         // 選択範囲移動
                         return mouseMove.TakeUntil(mouseUp).Do(q =>
@@ -1589,6 +1906,36 @@ namespace Ched.UI
             }
 
             // ノート描画
+            // SSF
+            foreach (var note in Notes.Motions.Where(p => p.Tick >= HeadTick && p.Tick <= tailTick))
+            {
+                dc.DrawMotion(GetRectFromNotePosition(note.Tick, -1, 18), note.Direction);  // Force motions to be drawn slightly outside the lane
+            }
+
+            // SSF TODO
+            var slideSteps = Notes.SlideSteps.Where(p => p.StartTick <= tailTick && p.StartTick + p.GetDuration() >= HeadTick).ToList();
+            foreach (var slide in slideSteps)
+            {
+                var bg = new SlideStep.TapBase[] { slide.StartNote }.Concat(slide.StepNotes.OrderBy(p => p.Tick)).ToList();
+                var visibleSteps = new SlideStep.TapBase[] { slide.StartNote }.Concat(slide.StepNotes.OrderBy(p => p.Tick)).ToList();
+                for (int i = 0; i < bg.Count - 1; i++)
+                {
+                    var note = ((SlideStep.StepTap)bg[i + 1]).IsVisible ? bg[i] : bg[i + 1]; // For SlideSteps, IsVisible flag actually corresponds to IsShuffle (TBD if this will change)
+                    dc.DrawSlideStepBackground(
+                        (UnitLaneWidth + BorderThickness) * bg[i].Width - BorderThickness,
+                        (UnitLaneWidth + BorderThickness) * note.Width - BorderThickness,
+                        (UnitLaneWidth + BorderThickness) * bg[i].LaneIndex,
+                        GetYPositionFromTick(bg[i].Tick),
+                        (UnitLaneWidth + BorderThickness) * note.LaneIndex,
+                        GetYPositionFromTick(bg[i + 1].Tick) + 0.4f,
+                        GetYPositionFromTick(visibleSteps.Last(p => p.Tick <= bg[i].Tick).Tick),
+                        GetYPositionFromTick(visibleSteps.First(p => p.Tick >= bg[i + 1].Tick).Tick),
+                        ShortNoteHeight,
+                        slide.Side);
+                }
+            }
+            // End SSF
+
             var holds = Notes.Holds.Where(p => p.StartTick <= tailTick && p.StartTick + p.GetDuration() >= HeadTick).ToList();
             // ロングノーツ背景
             // HOLD
@@ -1687,6 +2034,39 @@ namespace Ched.UI
             {
                 dc.DrawDamage(GetRectFromNotePosition(note.Tick, note.LaneIndex, note.Width));
             }
+
+            // SSF
+            foreach (var slide in slideSteps)
+            {
+                dc.DrawSlideStepBegin(GetRectFromNotePosition(slide.StartTick, slide.StartNote.LaneIndex, slide.StartWidth), slide.Side);
+                var orderedSteps = slide.StepNotes.OrderBy(p => p.TickOffset);
+                for (int i = 0; i < orderedSteps.Count(); i++)
+                {
+                    var step = orderedSteps.ElementAt(i);
+                    if (!Editable && !step.IsVisible) continue;
+                    if (step.IsVisible) // For SlideSteps, this flag actually corresponds to IsShuffle (TBD if this will change)
+                    {
+                        var prevLane = i == 0 ? slide.StartNote.LaneIndex : orderedSteps.ElementAt(i - 1).LaneIndex;
+                        var prevWidth = i == 0 ? slide.StartNote.Width : orderedSteps.ElementAt(i - 1).Width;
+                        var lane = Math.Min(step.LaneIndex, prevLane);
+                        var width = Math.Max(step.LaneIndex + step.Width, prevLane + prevWidth) - lane;
+                        RectangleF rect = GetRectFromNotePosition(step.Tick, lane, width);
+                        dc.DrawSlideStepStep(rect, slide.Side);
+                    }
+                    else
+                    {
+                        RectangleF rect = GetRectFromNotePosition(step.Tick, step.LaneIndex, step.Width);
+                        dc.DrawBorder(rect);
+                    }
+
+                }
+            }
+
+            foreach (var note in Notes.Steps.Where(p => p.Tick >= HeadTick && p.Tick <= tailTick))
+            {
+                dc.DrawStep(GetRectFromNotePosition(note.Tick, note.LaneIndex, note.Width), note.Side);
+            }
+            // End SSF
 
             // AIR-ACTION(ActionNote)
             foreach (var action in airActions)
@@ -1883,6 +2263,12 @@ namespace Ched.UI
             c.Holds.AddRange(Notes.Holds.Where(p => p.StartTick >= minTick && p.StartTick + p.Duration <= maxTick && p.LaneIndex >= startLaneIndex && p.LaneIndex + p.Width <= endLaneIndex));
             c.Slides.AddRange(Notes.Slides.Where(p => p.StartTick >= minTick && p.StartTick + p.GetDuration() <= maxTick && p.StartLaneIndex >= startLaneIndex && p.StartLaneIndex + p.StartWidth <= endLaneIndex && p.StepNotes.All(r => r.LaneIndex >= startLaneIndex && r.LaneIndex + r.Width <= endLaneIndex)));
 
+            // SSF
+            c.Steps.AddRange(Notes.Steps.Where(p => contained(p)));
+            c.Motions.AddRange(Notes.Motions.Where(p => contained(p)));
+            c.SlideSteps.AddRange(Notes.SlideSteps.Where(p => p.StartTick >= minTick && p.StartTick + p.GetDuration() <= maxTick && p.StartLaneIndex >= startLaneIndex && p.StartLaneIndex + p.StartWidth <= endLaneIndex && p.StepNotes.All(r => r.LaneIndex >= startLaneIndex && r.LaneIndex + r.Width <= endLaneIndex)));
+            // End SSF
+
             var airables = c.GetShortNotes().Cast<IAirable>()
                 .Concat(c.Holds.Select(p => p.EndNote))
                 .Concat(c.Slides.SelectMany(p => p.StepNotes))
@@ -1950,6 +2336,13 @@ namespace Ched.UI
                 slide.StartTick = slide.StartTick - data.StartTick + CurrentTick;
             }
 
+            // SSF
+            foreach (var slide in data.SelectedNotes.SlideSteps)
+            {
+                slide.StartTick = slide.StartTick - data.StartTick + CurrentTick;
+            }
+            // End SSF
+
             foreach (var airAction in data.SelectedNotes.AirActions)
             {
                 // AIR-ACTIONの親ノート復元できないんやった……クソ設計だわ……
@@ -1967,7 +2360,9 @@ namespace Ched.UI
                 .Concat(data.SelectedNotes.Holds.Select(p => new InsertHoldOperation(Notes, p)))
                 .Concat(data.SelectedNotes.Slides.Select(p => new InsertSlideOperation(Notes, p)))
                 .Concat(data.SelectedNotes.Airs.Select(p => new InsertAirOperation(Notes, p)))
-                .Concat(data.SelectedNotes.AirActions.Select(p => new InsertAirActionOperation(Notes, p)));
+                .Concat(data.SelectedNotes.AirActions.Select(p => new InsertAirActionOperation(Notes, p)))
+                .Concat(data.SelectedNotes.Steps.Select(p => new InsertStepOperation(Notes, p)))   // SSF mod
+                .Concat(data.SelectedNotes.SlideSteps.Select(p => new InsertSlideStepOperation(Notes, p)));  // SSF mod
             var composite = new CompositeOperation("クリップボードからペースト", op.ToList());
             composite.Redo(); // 追加書くの面倒になったので許せ
             return composite;
@@ -2019,9 +2414,29 @@ namespace Ched.UI
                 return new RemoveSlideOperation(Notes, p);
             });
 
+            // SSF
+            var steps = selected.Steps.Select(p =>
+            {
+                Notes.Remove(p);
+                return new RemoveStepOperation(Notes, p);
+            });
+            var motions = selected.Motions.Select(p =>
+            {
+                Notes.Remove(p);
+                return new RemoveMotionOperation(Notes, p);
+            });
+            var slideSteps = selected.SlideSteps.Select(p =>
+            {
+                Notes.Remove(p);
+                return new RemoveSlideStepOperation(Notes, p);
+            });
+            // End SSF
+
             var opList = taps.Cast<IOperation>().Concat(extaps).Concat(flicks).Concat(damages)
                 .Concat(holds).Concat(slides)
                 .Concat(airs).Concat(airActions)
+                .Concat(steps).Concat(motions)  // SSF mod
+                .Concat(slideSteps)             // SSF mod
                 .ToList();
 
             if (opList.Count == 0) return;
@@ -2047,7 +2462,7 @@ namespace Ched.UI
         {
             var dicShortNotes = notes.GetShortNotes().ToDictionary(q => q, q => new MoveShortNoteOperation.NotePosition(q.Tick, q.LaneIndex));
             var dicHolds = notes.Holds.ToDictionary(q => q, q => new MoveHoldOperation.NotePosition(q.StartTick, q.LaneIndex, q.Width));
-            var dicSlides = notes.Slides;
+            var dicSlides = notes.Slides.Concat(notes.SlideSteps);   // SSF mod
             var referenced = new NoteCollection(notes);
             var airs = notes.GetShortNotes().Cast<IAirable>()
                 .Concat(notes.Holds.Select(p => p.EndNote))
@@ -2127,6 +2542,12 @@ namespace Ched.UI
             public IReadOnlyCollection<Flick> Flicks { get { return source.Flicks; } }
             public IReadOnlyCollection<Damage> Damages { get { return source.Damages; } }
 
+            // SSF
+            public IReadOnlyCollection<Step> Steps { get { return source.Steps; } }
+            public IReadOnlyCollection<Motion> Motions { get { return source.Motions; } }
+            public IReadOnlyCollection<SlideStep> SlideSteps { get { return source.SlideSteps; } }
+            // End SSF
+
             public NoteCollection(Core.NoteCollection src)
             {
                 Load(src);
@@ -2186,6 +2607,26 @@ namespace Ched.UI
                 NoteChanged?.Invoke(this, EventArgs.Empty);
             }
 
+            // SSF
+            public void Add(Step note)
+            {
+                source.Steps.Add(note);
+                NoteChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            public void Add(Motion note)
+            {
+                source.Motions.Add(note);
+                NoteChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            public void Add(SlideStep note)
+            {
+                source.SlideSteps.Add(note);
+                NoteChanged?.Invoke(this, EventArgs.Empty);
+            }
+            // End SSF
+
 
             public void Remove(Tap note)
             {
@@ -2237,6 +2678,26 @@ namespace Ched.UI
                 NoteChanged?.Invoke(this, EventArgs.Empty);
             }
 
+            // SSF
+            public void Remove(Step note)
+            {
+                source.Steps.Remove(note);
+                NoteChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            public void Remove(Motion note)
+            {
+                source.Motions.Remove(note);
+                NoteChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            public void Remove(SlideStep note)
+            {
+                source.SlideSteps.Remove(note);
+                NoteChanged?.Invoke(this, EventArgs.Empty);
+            }
+            // End SSF
+
             public IEnumerable<Air> GetReferencedAir(IAirable note)
             {
                 if (!AirDictionary.ContainsKey(note)) return Enumerable.Empty<Air>();
@@ -2251,8 +2712,8 @@ namespace Ched.UI
 
             public int GetLastTick()
             {
-                var shortNotes = Taps.Cast<TappableBase>().Concat(ExTaps).Concat(Flicks).Concat(Damages).ToList();
-                var longNotes = Holds.Cast<ILongNote>().Concat(Slides).Concat(AirActions).ToList();
+                var shortNotes = Taps.Cast<TappableBase>().Concat(ExTaps).Concat(Flicks).Concat(Damages).Concat(Steps).Concat(Motions).ToList();    // SSF mod
+                var longNotes = Holds.Cast<ILongNote>().Concat(Slides).Concat(AirActions).Concat(SlideSteps).ToList(); // SSF mod
                 int lastShortNoteTick = shortNotes.Count == 0 ? 0 : shortNotes.Max(p => p.Tick);
                 int lastLongNoteTick = longNotes.Count == 0 ? 0 : longNotes.Max(p => p.StartTick + p.GetDuration());
                 return Math.Max(lastShortNoteTick, lastLongNoteTick);
@@ -2271,6 +2732,12 @@ namespace Ched.UI
                 foreach (var note in collection.AirActions) Add(note);
                 foreach (var note in collection.Flicks) Add(note);
                 foreach (var note in collection.Damages) Add(note);
+
+                // SSF
+                foreach (var note in collection.Steps) Add(note);
+                foreach (var note in collection.Motions) Add(note);
+                foreach (var note in collection.SlideSteps) Add(note);
+                // End SSF
             }
 
             public void Clear()
@@ -2302,7 +2769,12 @@ namespace Ched.UI
         Air = 1 << 4,
         AirAction = 1 << 5,
         Flick = 1 << 6,
-        Damage = 1 << 7
+        Damage = 1 << 7,
+        // SSF
+        Step = 1 << 8,
+        Motion = 1 << 9,
+        SlideStep = 1 << 10
+        // End SSF
     }
 
     public struct AirDirection
@@ -2419,7 +2891,12 @@ namespace Ched.UI
             get
             {
                 if (Data == null) Restore();
-                return SelectedNotes.GetShortNotes().Count() == 0 && SelectedNotes.Holds.Count == 0 && SelectedNotes.Slides.Count == 0 && SelectedNotes.Airs.Count == 0 && SelectedNotes.AirActions.Count == 0;
+                return SelectedNotes.GetShortNotes().Count() == 0
+                    && SelectedNotes.Holds.Count == 0
+                    && SelectedNotes.Slides.Count == 0
+                    && SelectedNotes.Airs.Count == 0
+                    && SelectedNotes.AirActions.Count == 0
+                    && SelectedNotes.SlideSteps.Count == 0; // SSF mod
             }
         }
 
@@ -2479,6 +2956,12 @@ namespace Ched.UI
             res.AirActions = collection.AirActions.ToList();
             res.Flicks = collection.Flicks.ToList();
             res.Damages = collection.Damages.ToList();
+
+            // SSF
+            res.Steps = collection.Steps.ToList();
+            res.Motions = collection.Motions.ToList();
+            res.SlideSteps = collection.SlideSteps.ToList();
+            // End SSF
             return res;
         }
     }

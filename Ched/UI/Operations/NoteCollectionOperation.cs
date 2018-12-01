@@ -328,4 +328,120 @@ namespace Ched.UI.Operations
             Collection.Add(Note);
         }
     }
+
+    // SSF
+    public class InsertStepOperation : NoteCollectionOperation<Step>
+    {
+        public override string Description { get { return "STEPの追加"; } }
+
+        public InsertStepOperation(NoteView.NoteCollection collection, Step note) : base(collection, note)
+        {
+        }
+
+        public override void Redo()
+        {
+            Collection.Add(Note);
+        }
+
+        public override void Undo()
+        {
+            Collection.Remove(Note);
+        }
+    }
+
+    public class RemoveStepOperation : NoteCollectionOperation<Step>
+    {
+        public override string Description { get { return "STEPの削除"; } }
+
+        public RemoveStepOperation(NoteView.NoteCollection collection, Step note) : base(collection, note)
+        {
+        }
+
+        public override void Redo()
+        {
+            Collection.Remove(Note);
+        }
+
+        public override void Undo()
+        {
+            Collection.Add(Note);
+        }
+    }
+
+    public class InsertMotionOperation : NoteCollectionOperation<Motion>
+    {
+        public override string Description { get { return "MOTIONの追加"; } }
+
+        public InsertMotionOperation(NoteView.NoteCollection collection, Motion note) : base(collection, note)
+        {
+        }
+
+        public override void Redo()
+        {
+            Collection.Add(Note);
+        }
+
+        public override void Undo()
+        {
+            Collection.Remove(Note);
+        }
+    }
+
+    public class RemoveMotionOperation : NoteCollectionOperation<Motion>
+    {
+        public override string Description { get { return "MOTIONの削除"; } }
+
+        public RemoveMotionOperation(NoteView.NoteCollection collection, Motion note) : base(collection, note)
+        {
+        }
+
+        public override void Redo()
+        {
+            Collection.Remove(Note);
+        }
+
+        public override void Undo()
+        {
+            Collection.Add(Note);
+        }
+    }
+
+    public class InsertSlideStepOperation : NoteCollectionOperation<SlideStep>
+    {
+        public override string Description { get { return "HOLDの追加"; } }
+
+        public InsertSlideStepOperation(NoteView.NoteCollection collection, SlideStep note) : base(collection, note)
+        {
+        }
+
+        public override void Redo()
+        {
+            Collection.Add(Note);
+        }
+
+        public override void Undo()
+        {
+            Collection.Remove(Note);
+        }
+    }
+
+    public class RemoveSlideStepOperation : NoteCollectionOperation<SlideStep>
+    {
+        public override string Description { get { return "HOLDの削除"; } }
+
+        public RemoveSlideStepOperation(NoteView.NoteCollection collection, SlideStep note) : base(collection, note)
+        {
+        }
+
+        public override void Redo()
+        {
+            Collection.Remove(Note);
+        }
+
+        public override void Undo()
+        {
+            Collection.Add(Note);
+        }
+    }
+    // End SSF
 }

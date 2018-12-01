@@ -205,4 +205,22 @@
   <data name="CutIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\scissors-blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="StepLeftIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stepleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StepRightIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stepright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MotionDownIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\motiondown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MotionUpIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\motionup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HoldStepLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stepholdleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HoldStepRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stepholdright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

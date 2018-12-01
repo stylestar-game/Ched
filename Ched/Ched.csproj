@@ -412,6 +412,24 @@
       <Name>Ched.Drawing</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stepleft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stepright.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\motiondown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\motionup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stepholdleft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stepholdright.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -102,6 +102,10 @@ namespace Ched.Components.Exporter
                     .Concat(notes.ExTaps.Cast<TappableBase>().Select(p => new { Type = '2', Note = p }))
                     .Concat(notes.Flicks.Cast<TappableBase>().Select(p => new { Type = '3', Note = p }))
                     .Concat(notes.Damages.Cast<TappableBase>().Select(p => new { Type = '4', Note = p }))
+                    // SSF
+                    .Concat(notes.Steps.Cast<TappableBase>().Select(p => new { Type = ((SteppableBase)p).Side == Side.Left ? '1' : '2', Note = p }))
+                    .Concat(notes.Motions.Cast<TappableBase>().Select(p => new {  Type = ((MotionableBase)p).Direction == Direction.Up ? '3' : '4', Note = p}))
+                    // End SSF
                     .Select(p => new
                     {
                         BarPosition = barIndexCalculator.GetBarPositionFromTick(p.Note.Tick),
@@ -300,6 +304,65 @@ namespace Ched.Components.Exporter
                         }
                     }
                 }
+
+                // SSF
+                identifier.Clear();
+
+                var slideSteps = notes.SlideSteps
+                    .OrderBy(p => p.StartTick)
+                    .Select(p => new
+                    {
+                        Identifier = identifier.Allocate(p.StartTick, p.GetDuration()),
+                        Note = p
+                    });
+
+                foreach (var slide in slideSteps)
+                {
+                    var start = new[] { new
+                    {
+                        TickOffset = 0,
+                        BarPosition = barIndexCalculator.GetBarPositionFromTick(slide.Note.StartTick),
+                        LaneIndex = slide.Note.StartLaneIndex,
+                        Width = slide.Note.StartWidth,
+                        Type = "1"
+                    } };
+                    var steps = slide.Note.StepNotes.OrderBy(p => p.TickOffset).Select(p => new
+                    {
+                        TickOffset = p.TickOffset,
+                        BarPosition = barIndexCalculator.GetBarPositionFromTick(p.Tick),
+                        LaneIndex = p.LaneIndex,
+                        Width = p.Width,
+                        Type = p.IsVisible ? "5" : "4"
+                    }).Take(slide.Note.StepNotes.Count - 1);
+                    var endNote = slide.Note.StepNotes.OrderBy(p => p.TickOffset).Last();
+                    var end = new[] { new
+                    {
+                        TickOffset = endNote.TickOffset,
+                        BarPosition= barIndexCalculator.GetBarPositionFromTick(endNote.Tick),
+                        LaneIndex = endNote.LaneIndex,
+                        Width = endNote.Width,
+                        Type = endNote.IsVisible ? "3" : "2"
+                    } };
+                    var slideNotes = start.Concat(steps).Concat(end);
+                    foreach (var notesInBar in slideNotes.GroupBy(p => p.BarPosition.BarIndex))
+                    {
+                        foreach (var notesInLane in notesInBar.GroupBy(p => p.LaneIndex))
+                        {
+                            var sig = barIndexCalculator.GetTimeSignatureFromBarIndex(notesInBar.Key);
+                            int barLength = barTick * sig.Numerator / sig.Denominator;
+                            int gcd = notesInLane.Select(p => p.BarPosition.TickOffset).Aggregate(barLength, (p, q) => GetGcd(p, q));
+                            var dic = notesInLane.ToDictionary(p => p.BarPosition.TickOffset, p => p);
+                            writer.Write("#{0:000}{1}{2}{3}:", notesInBar.Key, slide.Note.Side == Side.Left ? "2" : "3", notesInLane.Key.ToString("x"), slide.Identifier);
+                            for (int i = 0; i * gcd < barLength; i++)
+                            {
+                                int tickOffset = i * gcd;
+                                writer.Write(dic.ContainsKey(tickOffset) ? dic[tickOffset].Type + ToLaneWidthString(dic[tickOffset].Width) : "00");
+                            }
+                            writer.WriteLine();
+                        }
+                    }
+                }
+                // End SSF
 
                 identifier.Clear();
 

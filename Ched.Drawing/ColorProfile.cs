@@ -41,5 +41,16 @@ namespace Ched.Drawing
         public Color AirDownColor { get; set; }
         public Color AirHoldLineColor { get; set; }
         public GradientColor AirStepColor { get; set; }
+
+        // SSF
+        public GradientColor StepLeftColor { get; set; }
+        public GradientColor StepRightColor { get; set; }
+        public GradientColor MotionUpColor { get; set; }
+        public GradientColor MotionDownColor { get; set; }
+        public GradientColor SlideStepLeftBackgroundColor { get; set; }
+        public GradientColor SlideStepLeftColor { get; set; }
+        public GradientColor SlideStepRightBackgroundColor { get; set; }
+        public GradientColor SlideStepRightColor { get; set; }
+        // End SSF
     }
 }

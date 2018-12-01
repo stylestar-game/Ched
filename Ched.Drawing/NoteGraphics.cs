@@ -218,5 +218,65 @@ namespace Ched.Drawing
         {
             dc.Graphics.DrawBorder(rect, dc.ColorProfile.BorderColor);
         }
+
+        // SSF
+        public static void DrawStep(this DrawingContext dc, RectangleF rect, Side side)
+        {
+            dc.Graphics.DrawTappableNote(rect, side == Side.Left ? dc.ColorProfile.StepLeftColor : dc.ColorProfile.StepRightColor, dc.ColorProfile.BorderColor);
+        }
+
+        public static void DrawMotion(this DrawingContext dc, RectangleF rect, Direction direction)
+        {
+            dc.Graphics.DrawNote(rect, direction == Direction.Up ? dc.ColorProfile.MotionUpColor : dc.ColorProfile.MotionDownColor, dc.ColorProfile.BorderColor);
+        }
+
+        public static void DrawSlideStepBegin(this DrawingContext dc, RectangleF rect, Side side)
+        {
+            dc.DrawSlideStepStep(rect, side);
+            dc.Graphics.DrawTapSymbol(rect);
+        }
+
+        public static void DrawSlideStepStep(this DrawingContext dc, RectangleF rect, Side side)
+        {
+            dc.Graphics.DrawNote(rect, side == Side.Left ? dc.ColorProfile.SlideStepLeftColor : dc.ColorProfile.SlideStepRightColor, dc.ColorProfile.BorderColor);
+        }
+
+        /// <summary>
+        /// SLIDEの背景を描画します。
+        /// </summary>
+        /// <param name="g">描画先Graphics</param>
+        /// <param name="width1">ノートの描画幅</param>
+        /// <param name="x1">開始ノートの左端位置</param>
+        /// <param name="y1">開始ノートのY座標</param>
+        /// <param name="x2">終了ノートの左端位置</param>
+        /// <param name="y2">終了ノートのY座標</param>
+        /// <param name="gradStartY">始点Step以前の中継点のY座標(グラデーション描画用)</param>
+        /// <param name="gradEndY">終点Step以後の中継点のY座標(グラデーション描画用)</param>
+        /// <param name="noteHeight">ノートの描画高さ</param>
+        public static void DrawSlideStepBackground(this DrawingContext dc, float width1, float width2, float x1, float y1, float x2, float y2, float gradStartY, float gradEndY, float noteHeight, Side side)
+        {
+            Color BackgroundEdgeColor = side == Side.Left ? dc.ColorProfile.SlideStepLeftBackgroundColor.DarkColor : dc.ColorProfile.SlideStepRightBackgroundColor.DarkColor;
+            Color BackgroundMiddleColor = side == Side.Left ? dc.ColorProfile.SlideStepLeftBackgroundColor.LightColor : dc.ColorProfile.SlideStepRightBackgroundColor.LightColor;
+
+            var prevMode = dc.Graphics.SmoothingMode;
+            dc.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            var rect = new RectangleF(Math.Min(x1, x2), Math.Min(y1, y2), Math.Abs(x1 - x2) + width1, Math.Abs(y1 - y2));
+            var gradientRect = new RectangleF(rect.Left, gradStartY, rect.Width, gradEndY - gradStartY);
+            using (var brush = new LinearGradientBrush(gradientRect, BackgroundEdgeColor, BackgroundMiddleColor, LinearGradientMode.Vertical))
+            {
+                var blend = new ColorBlend(4)
+                {
+                    Colors = new Color[] { BackgroundEdgeColor, BackgroundMiddleColor, BackgroundMiddleColor, BackgroundEdgeColor },
+                    Positions = new float[] { 0.0f, 0.3f, 0.7f, 1.0f }
+                };
+                brush.InterpolationColors = blend;
+                using (var path = GetSlideBackgroundPath(width1, width2, x1, y1, x2, y2))
+                {
+                    dc.Graphics.FillPath(brush, path);
+                }
+            }
+            dc.Graphics.SmoothingMode = prevMode;
+        }
+        // End SSF
     }
 }

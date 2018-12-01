@@ -538,4 +538,233 @@ namespace Ched.UI.Operations
             ParentNote.ActionNotes.Add(ActionNote);
         }
     }
+
+    // SSF
+    public class MoveSlideStepStepNoteOperation : IOperation
+    {
+        public string Description { get { return "HOLD中継点の移動"; } }
+
+        public SlideStep.StepTap StepNote { get; }
+        public NotePosition BeforePosition { get; }
+        public NotePosition AfterPosition { get; }
+
+        public MoveSlideStepStepNoteOperation(SlideStep.StepTap note, NotePosition before, NotePosition after)
+        {
+            StepNote = note;
+            BeforePosition = before;
+            AfterPosition = after;
+        }
+
+        public void Redo()
+        {
+            StepNote.TickOffset = AfterPosition.TickOffset;
+            StepNote.SetPosition(AfterPosition.LaneIndexOffset, AfterPosition.WidthChange);
+        }
+
+        public void Undo()
+        {
+            StepNote.TickOffset = BeforePosition.TickOffset;
+            StepNote.SetPosition(BeforePosition.LaneIndexOffset, BeforePosition.WidthChange);
+        }
+
+        public struct NotePosition
+        {
+            public int TickOffset { get; }
+            public int LaneIndexOffset { get; }
+            public int WidthChange { get; }
+
+            public NotePosition(int tickOffset, int laneIndexOffset, int widthChange)
+            {
+                TickOffset = tickOffset;
+                LaneIndexOffset = laneIndexOffset;
+                WidthChange = widthChange;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null || !(obj is NotePosition)) return false;
+                NotePosition other = (NotePosition)obj;
+                return TickOffset == other.TickOffset && LaneIndexOffset == other.LaneIndexOffset && WidthChange == other.WidthChange;
+            }
+
+            public override int GetHashCode()
+            {
+                return TickOffset ^ LaneIndexOffset ^ WidthChange;
+            }
+
+            public static bool operator ==(NotePosition a, NotePosition b)
+            {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(NotePosition a, NotePosition b)
+            {
+                return !a.Equals(b);
+            }
+        }
+    }
+
+    public class MoveSlideStepOperation : IOperation
+    {
+        public string Description { get { return "HOLDの移動"; } }
+
+        protected SlideStep Note;
+        protected NotePosition BeforePosition { get; }
+        protected NotePosition AfterPosition { get; }
+
+        public MoveSlideStepOperation(SlideStep note, NotePosition before, NotePosition after)
+        {
+            Note = note;
+            BeforePosition = before;
+            AfterPosition = after;
+        }
+
+        public void Redo()
+        {
+            Note.StartTick = AfterPosition.StartTick;
+            Note.SetPosition(AfterPosition.StartLaneIndex, AfterPosition.StartWidth);
+        }
+
+        public void Undo()
+        {
+            Note.StartTick = BeforePosition.StartTick;
+            Note.SetPosition(BeforePosition.StartLaneIndex, BeforePosition.StartWidth);
+        }
+
+        public struct NotePosition
+        {
+            public int StartTick { get; }
+            public int StartLaneIndex { get; }
+            public int StartWidth { get; }
+
+            public NotePosition(int startTick, int startLaneIndex, int startWidth)
+            {
+                StartTick = startTick;
+                StartLaneIndex = startLaneIndex;
+                StartWidth = startWidth;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null || !(obj is NotePosition)) return false;
+                NotePosition other = (NotePosition)obj;
+                return StartTick == other.StartTick && StartLaneIndex == other.StartLaneIndex && StartWidth == other.StartWidth;
+            }
+
+            public override int GetHashCode()
+            {
+                return StartTick ^ StartLaneIndex ^ StartWidth;
+            }
+
+            public static bool operator ==(NotePosition a, NotePosition b)
+            {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(NotePosition a, NotePosition b)
+            {
+                return !a.Equals(b);
+            }
+        }
+    }
+
+    public class FlipSlideStepOperation : IOperation
+    {
+        public string Description { get { return "HOLDの反転"; } }
+
+        protected SlideStep Note;
+
+        public FlipSlideStepOperation(SlideStep note)
+        {
+            Note = note;
+        }
+
+        public void Redo()
+        {
+            Note.Flip();
+        }
+
+        public void Undo()
+        {
+            Note.Flip();
+        }
+    }
+
+    public abstract class SlideStepStepNoteCollectionOperation : IOperation
+    {
+        public abstract string Description { get; }
+
+        protected SlideStep ParentNote { get; }
+        protected SlideStep.StepTap StepNote { get; }
+
+        public SlideStepStepNoteCollectionOperation(SlideStep parent, SlideStep.StepTap stepNote)
+        {
+            ParentNote = parent;
+            StepNote = stepNote;
+        }
+
+        public abstract void Redo();
+        public abstract void Undo();
+    }
+
+    public class InsertSlideStepStepNoteOperation : SlideStepStepNoteCollectionOperation
+    {
+        public override string Description { get { return "HOLD中継点の追加"; } }
+
+        public InsertSlideStepStepNoteOperation(SlideStep parent, SlideStep.StepTap stepNote) : base(parent, stepNote)
+        {
+        }
+
+        public override void Redo()
+        {
+            ParentNote.StepNotes.Add(StepNote);
+        }
+
+        public override void Undo()
+        {
+            ParentNote.StepNotes.Remove(StepNote);
+        }
+    }
+
+    public class RemoveSlideStepStepNoteOperation : SlideStepStepNoteCollectionOperation
+    {
+        public override string Description { get { return "HOLD中継点の追加"; } }
+
+        public RemoveSlideStepStepNoteOperation(SlideStep parent, SlideStep.StepTap stepNote) : base(parent, stepNote)
+        {
+        }
+
+        public override void Redo()
+        {
+            ParentNote.StepNotes.Remove(StepNote);
+        }
+
+        public override void Undo()
+        {
+            ParentNote.StepNotes.Add(StepNote);
+        }
+    }
+
+    public class StepSlideSwitchShuffleOperation : IOperation
+    {
+        public string Description { get { return "HOLD Swap Shuffle"; } }
+
+        protected SlideStep.StepTap Note;
+
+        public StepSlideSwitchShuffleOperation(SlideStep.StepTap note)
+        {
+            Note = note;
+        }
+
+        public void Redo()
+        {
+            Note.IsVisible = !Note.IsVisible;
+        }
+
+        public void Undo()
+        {
+            Note.IsVisible = !Note.IsVisible;
+        }
+    }
+    // End SSF
 }

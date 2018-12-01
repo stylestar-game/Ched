@@ -31,6 +31,15 @@ namespace Ched.Core
         [Newtonsoft.Json.JsonProperty]
         private List<AirAction> airActions;
 
+        // SSF
+        [Newtonsoft.Json.JsonProperty]
+        private List<Step> steps;
+        [Newtonsoft.Json.JsonProperty]
+        private List<Motion> motions;
+        [Newtonsoft.Json.JsonProperty]
+        private List<SlideStep> slideSteps;
+        // End SSF
+
         public List<Tap> Taps
         {
             get { return taps; }
@@ -79,6 +88,24 @@ namespace Ched.Core
             set { damages = value; }
         }
 
+        // SSF
+        public List<Step> Steps
+        {
+            get { return steps; }
+            set { steps = value; }
+        }
+        public List<Motion> Motions
+        {
+            get { return motions; }
+            set { motions = value; }
+        }
+        public List<SlideStep> SlideSteps
+        {
+            get { return slideSteps; }
+            set { slideSteps = value; }
+        }
+        // End SSF
+
         public NoteCollection()
         {
             Taps = new List<Tap>();
@@ -89,6 +116,12 @@ namespace Ched.Core
             AirActions = new List<AirAction>();
             Flicks = new List<Flick>();
             Damages = new List<Damage>();
+
+            // SSF
+            Steps = new List<Step>();
+            Motions = new List<Motion>();
+            SlideSteps = new List<SlideStep>();
+            // End SSF
         }
 
         public NoteCollection(NoteCollection collection)
@@ -101,11 +134,17 @@ namespace Ched.Core
             AirActions = collection.AirActions.ToList();
             Flicks = collection.Flicks.ToList();
             Damages = collection.Damages.ToList();
+
+            // SSF
+            Steps = collection.Steps.ToList();
+            Motions = collection.Motions.ToList();
+            SlideSteps = collection.SlideSteps.ToList();
+            // End SSF
         }
 
         public IEnumerable<TappableBase> GetShortNotes()
         {
-            return Taps.Cast<TappableBase>().Concat(ExTaps).Concat(Flicks).Concat(Damages);
+            return Taps.Cast<TappableBase>().Concat(ExTaps).Concat(Flicks).Concat(Damages).Concat(Steps).Concat(Motions); // SSF mod
         }
     }
 }

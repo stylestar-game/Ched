@@ -164,6 +164,7 @@ namespace Ched.UI
                 this.Menu = CreateMainMenu(NoteView);
                 this.Controls.Add(NoteView);
                 this.Controls.Add(NoteViewScrollBar);
+                this.Controls.Add(CreateNewNoteTypeSSFToolStrip(NoteView));
                 this.Controls.Add(CreateNewNoteTypeToolStrip(NoteView));
                 this.Controls.Add(CreateMainToolStrip(NoteView));
             }
@@ -847,6 +848,109 @@ namespace Ched.UI
                 quantizeComboBox
             });
         }
+
+        // SSF
+        private ToolStrip CreateNewNoteTypeSSFToolStrip(NoteView noteView)
+        {
+            var stepLeftButton = new ToolStripButton("STEP(L)", Resources.StepLeftIcon, (s, e) =>
+            {
+                noteView.NewNoteType = NoteType.Step;
+                noteView.NoteSide = Side.Left;
+            })
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Image
+            };
+            var stepRightButton = new ToolStripButton("STEP(R)", Resources.StepRightIcon, (s, e) =>
+            {
+                noteView.NewNoteType = NoteType.Step;
+                noteView.NoteSide = Side.Right;
+            })
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Image
+            };
+            var holdLeftButton = new ToolStripButton("HOLD(L)", Resources.HoldStepLeft, (s, e) =>
+            {
+                noteView.NewNoteType = NoteType.SlideStep;
+                noteView.NoteSide = Side.Left;
+                noteView.IsNewSlideStepVisible = false;
+            })
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Image
+            };
+            var holdRightButton = new ToolStripButton("HOLD(R)", Resources.HoldStepRight, (s, e) =>
+            {
+                noteView.NewNoteType = NoteType.SlideStep;
+                noteView.NoteSide = Side.Right;
+                noteView.IsNewSlideStepVisible = false;
+            })
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Image
+            };
+            var motionUpButton = new ToolStripButton("MOTION(U)", Resources.MotionUpIcon, (s, e) =>
+            {
+                noteView.NewNoteType = NoteType.Motion;
+                noteView.NoteDirection = Direction.Up;
+            })
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Image
+            };
+            var motionDownButton = new ToolStripButton("MOTION(U)", Resources.MotionDownIcon, (s, e) =>
+            {
+                noteView.NewNoteType = NoteType.Motion;
+                noteView.NoteDirection = Direction.Down;
+            })
+            {
+                DisplayStyle = ToolStripItemDisplayStyle.Image
+            };
+
+            var quantizeTicks = new int[]
+            {
+                4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192
+            };
+            var quantizeComboBox = new ToolStripComboBox("クォンタイズ")
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                AutoSize = false,
+                Width = 80
+            };
+            quantizeComboBox.Items.AddRange(quantizeTicks.Select(p => p + MainFormStrings.Division).ToArray());
+            quantizeComboBox.Items.Add(MainFormStrings.Custom);
+            quantizeComboBox.SelectedIndexChanged += (s, e) =>
+            {
+                if (quantizeComboBox.SelectedIndex == quantizeComboBox.Items.Count - 1)
+                {
+                    // ユーザー定義
+                    var form = new CustomQuantizeSelectionForm(ScoreBook.Score.TicksPerBeat * 4);
+                    if (form.ShowDialog(this) == DialogResult.OK)
+                    {
+                        noteView.QuantizeTick = form.QuantizeTick;
+                    }
+                }
+                else
+                {
+                    noteView.QuantizeTick = noteView.UnitBeatTick * 4 / quantizeTicks[quantizeComboBox.SelectedIndex];
+                }
+                noteView.Focus();
+            };
+            quantizeComboBox.SelectedIndex = 1;
+
+            noteView.NewNoteTypeChanged += (s, e) =>
+            {
+                stepLeftButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Step) && noteView.NoteSide == Side.Left;
+                stepRightButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Step) && noteView.NoteSide == Side.Right;
+                holdLeftButton.Checked = noteView.NewNoteType.HasFlag(NoteType.SlideStep) && noteView.NoteSide == Side.Left;
+                holdRightButton.Checked = noteView.NewNoteType.HasFlag(NoteType.SlideStep) && noteView.NoteSide == Side.Right;
+                motionUpButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Motion) && noteView.NoteDirection == Direction.Up;
+                motionDownButton.Checked = noteView.NewNoteType.HasFlag(NoteType.Motion) && noteView.NoteDirection == Direction.Down;
+            };
+            
+            return new ToolStrip(new ToolStripItem[]
+            {
+                stepLeftButton, stepRightButton, holdLeftButton, holdRightButton, motionUpButton, motionDownButton, 
+                quantizeComboBox
+            });
+        }
+        // End SSF
     }
 
     internal class ExportData
