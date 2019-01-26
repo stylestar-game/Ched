@@ -48,6 +48,7 @@ namespace Ched.UI
         // SSF
         private Side noteSide = Side.Left;
         private Direction noteDirection = Direction.Up;
+        private bool isQuarterLaneHighlight = true;
         // End SSF
 
         /// <summary>
@@ -310,6 +311,12 @@ namespace Ched.UI
                 noteDirection = value;
                 NewNoteTypeChanged?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        public bool IsQuarterLaneHighlight
+        {
+            get { return isQuarterLaneHighlight; }
+            set { isQuarterLaneHighlight = value; }
         }
         // End SSF
 
@@ -1854,11 +1861,12 @@ namespace Ched.UI
             // レーン分割線描画
             using (var lightPen = new Pen(LaneBorderLightColor, BorderThickness))
             using (var darkPen = new Pen(LaneBorderDarkColor, BorderThickness))
+            using (var brightPen = new Pen(BarLineColor, BorderThickness))
             {
                 for (int i = 0; i <= Constants.LanesCount; i++)
                 {
                     float x = i * (UnitLaneWidth + BorderThickness);
-                    pe.Graphics.DrawLine(i % 2 == 0 ? lightPen : darkPen, x, GetYPositionFromTick(HeadTick), x, GetYPositionFromTick(tailTick));
+                    pe.Graphics.DrawLine(i % 2 == 0 ? ((IsQuarterLaneHighlight && i % 4 == 0) ? brightPen : lightPen) : darkPen, x, GetYPositionFromTick(HeadTick), x, GetYPositionFromTick(tailTick));
                 }
             }
 

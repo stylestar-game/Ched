@@ -16,10 +16,15 @@ namespace Ched.UI
 {
     public partial class ExportForm : Form
     {
-        private readonly string ArgsKey = "sus";
-        private readonly string Filter = "Seaurchin Score File(*.sus)|*.sus";
+        //private readonly string ArgsKey = "sus";
+        //private readonly string Filter = "Seaurchin Score File(*.sus)|*.sus";
 
-        private SusExporter exporter = new SusExporter();
+        //private SusExporter exporter = new SusExporter();
+
+        private readonly string ArgsKey = "ssf";
+        private readonly string Filter = "StyleStar File(*.ssf)|*.ssf";
+
+        private SsfExporter exporter = new SsfExporter();
 
         public string OutputPath
         {
@@ -35,15 +40,24 @@ namespace Ched.UI
             Icon = Properties.Resources.MainIcon;
             ShowInTaskbar = false;
 
-            levelDropDown.Items.AddRange(Enumerable.Range(1, 14).SelectMany(p => new string[] { p.ToString(), p + "+" }).ToArray());
-            difficultyDropDown.Items.AddRange(new string[] { "BASIC", "ADVANCED", "EXPERT", "MASTER", "WORLD'S END" });
+            //levelDropDown.Items.AddRange(Enumerable.Range(1, 14).SelectMany(p => new string[] { p.ToString(), p + "+" }).ToArray());
+            //difficultyDropDown.Items.AddRange(new string[] { "BASIC", "ADVANCED", "EXPERT", "MASTER", "WORLD'S END" });
+            levelDropDown.Items.AddRange(Enumerable.Range(1, 10).SelectMany(p => new string[] { p.ToString() }).ToArray());
+            difficultyDropDown.Items.AddRange(Enum.GetNames(typeof(SsfArgs.Difficulty)).SelectMany(p => new string[] { p.ToUpper() }).ToArray());
 
-            if (!book.ExporterArgs.ContainsKey(ArgsKey) || !(book.ExporterArgs[ArgsKey] is SusArgs))
+            //if (!book.ExporterArgs.ContainsKey(ArgsKey) || !(book.ExporterArgs[ArgsKey] is SusArgs))
+            //{
+            //    book.ExporterArgs[ArgsKey] = new SusArgs();
+            //}
+
+            //var args = book.ExporterArgs[ArgsKey] as SusArgs;
+
+            if (!book.ExporterArgs.ContainsKey(ArgsKey) || !(book.ExporterArgs[ArgsKey] is SsfArgs))
             {
-                book.ExporterArgs[ArgsKey] = new SusArgs();
+                book.ExporterArgs[ArgsKey] = new SsfArgs();
             }
 
-            var args = book.ExporterArgs[ArgsKey] as SusArgs;
+            var args = book.ExporterArgs[ArgsKey] as SsfArgs;
 
             titleBox.Text = book.Title;
             artistBox.Text = book.ArtistName;
@@ -79,7 +93,8 @@ namespace Ched.UI
                 book.Title = titleBox.Text;
                 book.ArtistName = artistBox.Text;
                 book.NotesDesignerName = notesDesignerBox.Text;
-                args.PlayDifficulty = (SusArgs.Difficulty)difficultyDropDown.SelectedIndex;
+                //args.PlayDifficulty = (SusArgs.Difficulty)difficultyDropDown.SelectedIndex;
+                args.PlayDifficulty = (SsfArgs.Difficulty)difficultyDropDown.SelectedIndex;
                 args.PlayLevel = levelDropDown.Text;
                 args.SongId = songIdBox.Text;
                 args.SoundFileName = soundFileBox.Text;

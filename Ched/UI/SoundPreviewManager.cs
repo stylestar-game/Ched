@@ -64,6 +64,14 @@ namespace Ched.UI
             {
                 tickSet.Add(tick);
             }
+            // SSF
+            var ssfNotesTick = notes.Steps.Cast<TappableBase>().Concat(notes.Motions).Select(p => p.Tick);
+            var ssfSlidesTick = notes.SlideSteps.SelectMany(p => new int[] { p.StartTick }.Concat(p.StepNotes.Where(q => q.IsVisible).Select(q => q.Tick)));
+            foreach (int tick in ssfNotesTick.Concat(ssfSlidesTick))
+            {
+                tickSet.Add(tick);
+            }
+            // End SSF
             TickElement = new LinkedList<int?>(tickSet.Where(p => p >= startTick).OrderBy(p => p).Select(p => new int?(p))).First;
 
             BPMElement = new LinkedList<BPMChangeEvent>(NoteView.ScoreEvents.BPMChangeEvents.OrderBy(p => p.Tick)).First;

@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\Exporter\IExporter.cs" />
+    <Compile Include="Components\Exporter\SsfExporter.cs" />
     <Compile Include="Components\Exporter\SusExporter.cs" />
     <Compile Include="Localization\ErrorStrings.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -41,6 +41,10 @@ namespace Ched.UI
 
         private Plugins.PluginManager PluginManager { get; } = Plugins.PluginManager.GetInstance();
 
+        // SSF
+        private ToolStrip activeToolStrip;
+        // End SSF
+
         private bool IsPreviewMode
         {
             get { return isPreviewMode; }
@@ -164,8 +168,8 @@ namespace Ched.UI
                 this.Menu = CreateMainMenu(NoteView);
                 this.Controls.Add(NoteView);
                 this.Controls.Add(NoteViewScrollBar);
-                this.Controls.Add(CreateNewNoteTypeSSFToolStrip(NoteView));
-                this.Controls.Add(CreateNewNoteTypeToolStrip(NoteView));
+                this.Controls.Add(activeToolStrip = CreateNewNoteTypeSSFToolStrip(NoteView));
+                //this.Controls.Add(CreateNewNoteTypeToolStrip(NoteView));
                 this.Controls.Add(CreateMainToolStrip(NoteView));
             }
 
@@ -949,6 +953,37 @@ namespace Ched.UI
                 stepLeftButton, stepRightButton, holdLeftButton, holdRightButton, motionUpButton, motionDownButton, 
                 quantizeComboBox
             });
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            int keyHit = -1;
+            switch (keyData)
+            {
+                case Keys.D1:
+                    keyHit = 1;
+                    break;
+                case Keys.D2:
+                    keyHit = 2;
+                    break;
+                case Keys.D3:
+                    keyHit = 3;
+                    break;
+                case Keys.D4:
+                    keyHit = 4;
+                    break;
+                case Keys.D5:
+                    keyHit = 5;
+                    break;
+                case Keys.D6:
+                    keyHit = 6;
+                    break;
+            }
+            if(keyHit > 0 && activeToolStrip?.Items.Count >= keyHit)
+            {
+                activeToolStrip.Items[keyHit - 1].PerformClick();
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
         // End SSF
     }
