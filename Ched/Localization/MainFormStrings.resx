@@ -255,4 +255,7 @@
   <data name="SlideStep" xml:space="preserve">
     <value>SLIDE(中継点)</value>
   </data>
+  <data name="SwapSidesSelectedNotes" xml:space="preserve">
+    <value>Swap Sides of Selected Notes</value>
+  </data>
 </root>

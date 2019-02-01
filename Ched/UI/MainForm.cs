@@ -363,6 +363,7 @@ namespace Ched.UI
 
             var flipSelectedNotesItem = new MenuItem(MainFormStrings.FlipSelectedNotes, (s, e) => noteView.FlipSelectedNotes());
             var removeSelectedNotesItem = new MenuItem(MainFormStrings.RemoveSelectedNotes, (s, e) => noteView.RemoveSelectedNotes(), Shortcut.Del);
+            var swapSidesItem = new MenuItem(MainFormStrings.SwapSidesSelectedNotes, (s, e) => NoteView.SwapSidesSelectedNotes());
 
             var removeEventsItem = new MenuItem(MainFormStrings.RemoveEvents, (s, e) =>
             {
@@ -413,7 +414,7 @@ namespace Ched.UI
             {
                 undoItem, redoItem, new MenuItem("-"),
                 cutItem, copyItem, pasteItem, pasteFlippedItem, new MenuItem("-"),
-                flipSelectedNotesItem, removeSelectedNotesItem, removeEventsItem, new MenuItem("-"),
+                flipSelectedNotesItem, swapSidesItem, removeSelectedNotesItem, removeEventsItem, new MenuItem("-"),
                 pluginItem
             };
 

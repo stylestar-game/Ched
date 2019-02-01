@@ -8,5 +8,9 @@ namespace Ched.Core.Notes
 {
     public class Step : SteppableBase
     {
+        public void SwapSides()
+        {
+            Side = Side == Side.Left ? Side.Right : Side.Left;
+        }
     }
 }

@@ -421,6 +421,15 @@ namespace Ched.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Swap Sides of Selected Notes.
+        /// </summary>
+        internal static string SwapSidesSelectedNotes {
+            get {
+                return ResourceManager.GetString("SwapSidesSelectedNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 拍子.
         /// </summary>
         internal static string TimeSignature {

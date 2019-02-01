@@ -2507,6 +2507,41 @@ namespace Ched.UI
             return opList.Count == 0 ? null : new CompositeOperation("ノーツの反転", opList);
         }
 
+        public void SwapSidesSelectedNotes()
+        {
+            var op = SwapSides(GetSelectedNotes());
+            if (op == null) return;
+            OperationManager.Push(op);
+            Invalidate();
+        }
+
+        /// <summary>
+        /// Swaps the sides of the notes in the collection and returns <see cref="IOperation"/>.
+        /// Returns null if the collection is empty.
+        /// </summary>
+        /// <param name="notes">Notes to be swaped<see cref="Core.NoteCollection"/></param>
+        /// <returns>Swap operation<see cref="IOperation"/></returns>
+        protected IOperation SwapSides(Core.NoteCollection notes)
+        {
+            var dicSteps = notes.Steps;
+            var dicSlideSteps = notes.SlideSteps;
+
+            var opSteps = dicSteps.Select(p =>
+            {
+                p.SwapSides();
+                return new SwapStepSideOperation(p);
+            });
+
+            var opSlideSteps = dicSlideSteps.Select(p =>
+            {
+                p.SwapSides();
+                return new SwapSlideStepSidesOperation(p);
+            });
+            
+            var opList = opSteps.Cast<IOperation>().Concat(opSlideSteps).ToList();
+            return opList.Count == 0 ? null : new CompositeOperation("Swapped sides of notes", opList);
+        }
+
         public void Undo()
         {
             if (!OperationManager.CanUndo) return;

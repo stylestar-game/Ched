@@ -20,5 +20,10 @@ namespace Ched.Core.Notes
                 side = value;
             }
         }
+
+        public void SwapSides()
+        {
+            Side = Side == Side.Left ? Side.Right : Side.Left;
+        }
     }
 }

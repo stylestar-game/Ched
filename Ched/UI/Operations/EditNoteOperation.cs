@@ -540,6 +540,28 @@ namespace Ched.UI.Operations
     }
 
     // SSF
+    public class SwapStepSideOperation : IOperation
+    {
+        public string Description { get { return "Swap Step L/R"; } }
+
+        protected Step Note { get; }
+
+        public SwapStepSideOperation(Step note)
+        {
+            Note = note;
+        }
+
+        public void Redo()
+        {
+            Note.SwapSides();
+        }
+
+        public void Undo()
+        {
+            Note.SwapSides();
+        }
+    }
+
     public class MoveSlideStepStepNoteOperation : IOperation
     {
         public string Description { get { return "HOLD中継点の移動"; } }
@@ -687,6 +709,28 @@ namespace Ched.UI.Operations
         public void Undo()
         {
             Note.Flip();
+        }
+    }
+
+    public class SwapSlideStepSidesOperation : IOperation
+    {
+        public string Description { get { return "Swap Hold/Slide L/R"; } }
+
+        protected SlideStep Note;
+
+        public SwapSlideStepSidesOperation(SlideStep note)
+        {
+            Note = note;
+        }
+
+        public void Redo()
+        {
+            Note.SwapSides();
+        }
+
+        public void Undo()
+        {
+            Note.SwapSides();
         }
     }
 
