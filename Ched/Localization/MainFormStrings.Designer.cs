@@ -19,7 +19,7 @@ namespace Ched.Localization {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class MainFormStrings {
@@ -331,6 +331,15 @@ namespace Ched.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 反転と足の左右反転を同時に貼り付け.
+        /// </summary>
+        internal static string PasteFlippedSwapped {
+            get {
+                return ResourceManager.GetString("PasteFlippedSwapped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ペン.
         /// </summary>
         internal static string Pen {
@@ -448,7 +457,7 @@ namespace Ched.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Swap Sides of Selected Notes.
+        ///   Looks up a localized string similar to 選択範囲の足の左右を反転.
         /// </summary>
         internal static string SwapSidesSelectedNotes {
             get {

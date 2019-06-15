@@ -2347,6 +2347,14 @@ namespace Ched.UI
             Invalidate();
         }
 
+        public void PasteFlippedSwappedNotes()
+        {
+            var op = PasteNotes(p => FlipAndSwapNotes(p.SelectedNotes));
+            if (op == null) return;
+            OperationManager.Push(op);
+            Invalidate();
+        }
+
         /// <summary>
         /// クリップボードにコピーされたノーツをペーストしてその操作を表す<see cref="IOperation"/>を返します。
         /// ペーストするノーツがない場合はnullを返します。
@@ -2574,9 +2582,44 @@ namespace Ched.UI
                 p.SwapSides();
                 return new SwapSlideStepSidesOperation(p);
             });
-            
+
             var opList = opSteps.Cast<IOperation>().Concat(opSlideSteps).ToList();
             return opList.Count == 0 ? null : new CompositeOperation("Swapped sides of notes", opList);
+        }
+
+        protected IOperation FlipAndSwapNotes(Core.NoteCollection notes)
+        {
+            var dicSteps = notes.Steps.ToDictionary(q => q, q => new MoveShortNoteOperation.NotePosition(q.Tick, q.LaneIndex));
+            var listSteps = notes.Steps;
+            var dicSlideSteps = notes.SlideSteps;
+
+            var opFlipSteps = dicSteps.Select(p =>
+            {
+                p.Key.LaneIndex = Constants.LanesCount - p.Key.LaneIndex - p.Key.Width;
+                var after = new MoveShortNoteOperation.NotePosition(p.Key.Tick, p.Key.LaneIndex);
+                return new MoveShortNoteOperation(p.Key, p.Value, after);
+            });
+
+            var opSwapSteps = listSteps.Select(p =>
+            {
+                p.SwapSides();
+                return new SwapStepSideOperation(p);
+            });
+
+            var opFlipSlides = dicSlideSteps.Select(p =>
+            {
+                p.Flip();
+                return new FlipSlideOperation(p);
+            });
+
+            var opSwapSlideSteps = dicSlideSteps.Select(p =>
+            {
+                p.SwapSides();
+                return new SwapSlideStepSidesOperation(p);
+            });
+
+            var opList = opFlipSteps.Cast<IOperation>().Concat(opSwapSteps).Concat(opFlipSlides).Concat(opSwapSlideSteps).ToList();
+            return opList.Count == 0 ? null : new CompositeOperation("Flipped and swapped notes", opList);
         }
 
         public void Undo()

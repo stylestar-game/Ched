@@ -117,12 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="&gt;&gt;label12.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="label13.Size" type="System.Drawing.Size, System.Drawing">
+    <value>43, 13</value>
+  </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
     <value>83, 13</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label10.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="label11.Text" xml:space="preserve">
     <value>出力先</value>
@@ -130,18 +134,20 @@
   <data name="&gt;&gt;label6.Name" xml:space="preserve">
     <value>label6</value>
   </data>
-  <data name="soundFileBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>119, 179</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>エクスポート</value>
+  </data>
+  <data name="&gt;&gt;titleBox.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="&gt;&gt;label8.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label11.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>22</value>
   </data>
   <data name="levelDropDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>119, 21</value>
@@ -158,14 +164,18 @@
   <data name="label4.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="&gt;&gt;titleBox.Parent" xml:space="preserve">
+  <data name="colorForeButton.TabIndex" type="System.Int32, mscorlib">
+    <value>31</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label13.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="&gt;&gt;label13.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;songIdBox.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 72</value>
+    <value>12</value>
   </data>
   <data name="label5.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -194,8 +204,8 @@
   <data name="&gt;&gt;label1.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 236</value>
   </data>
   <data name="&gt;&gt;label6.Parent" xml:space="preserve">
     <value>$this</value>
@@ -207,40 +217,64 @@
     <value>16</value>
   </data>
   <data name="&gt;&gt;levelDropDown.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;colorAccentButton.Name" xml:space="preserve">
+    <value>colorAccentButton</value>
   </data>
   <data name="browseButton.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
   </data>
-  <data name="&gt;&gt;exportButton.Parent" xml:space="preserve">
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>21</value>
   </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="label10.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="&gt;&gt;exportButton.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>23</value>
   </data>
   <data name="titleBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>119, 14</value>
   </data>
+  <data name="&gt;&gt;label10.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="artistBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>178, 20</value>
   </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>エクスポート</value>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>28</value>
+  </data>
+  <data name="exportButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom</value>
+  </data>
+  <data name="&gt;&gt;difficultyDropDown.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="&gt;&gt;artistBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="label10.Text" xml:space="preserve">
+    <value>背景色</value>
+  </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>23</value>
+    <value>29</value>
+  </data>
+  <data name="&gt;&gt;label10.Name" xml:space="preserve">
+    <value>label10</value>
   </data>
   <data name="&gt;&gt;label1.Name" xml:space="preserve">
     <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label13.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -255,7 +289,7 @@
     <value>6</value>
   </data>
   <data name="&gt;&gt;exportButton.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>7</value>
   </data>
   <data name="&gt;&gt;label11.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -263,11 +297,11 @@
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>6, 13</value>
   </data>
-  <data name="&gt;&gt;notesDesignerBox.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
   <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
     <value>36, 13</value>
+  </data>
+  <data name="&gt;&gt;colorDialog.Name" xml:space="preserve">
+    <value>colorDialog</value>
   </data>
   <data name="&gt;&gt;soundFileBox.Parent" xml:space="preserve">
     <value>$this</value>
@@ -275,11 +309,14 @@
   <data name="&gt;&gt;label11.Name" xml:space="preserve">
     <value>label11</value>
   </data>
+  <data name="&gt;&gt;colorForeButton.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="label5.Text" xml:space="preserve">
     <value>レベル</value>
   </data>
-  <data name="hasPaddingBarBox.Text" xml:space="preserve">
-    <value>先頭に1小節の空白を挿入する</value>
+  <data name="&gt;&gt;songIdBox.Name" xml:space="preserve">
+    <value>songIdBox</value>
   </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -287,15 +324,11 @@
   <data name="&gt;&gt;songIdBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="soundOffsetBox.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
     <value>Right</value>
   </data>
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="&gt;&gt;soundFileBox.Name" xml:space="preserve">
-    <value>soundFileBox</value>
   </data>
   <data name="&gt;&gt;label12.Parent" xml:space="preserve">
     <value>$this</value>
@@ -303,32 +336,35 @@
   <data name="&gt;&gt;label5.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;difficultyDropDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="colorAccentButton.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
   </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>22</value>
+  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 13</value>
   </data>
   <data name="&gt;&gt;soundOffsetBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;jacketFileBox.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>10</value>
   </data>
   <data name="&gt;&gt;jacketFileBox.Name" xml:space="preserve">
     <value>jacketFileBox</value>
   </data>
+  <data name="&gt;&gt;outputBox.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
   <data name="label7.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="&gt;&gt;label7.Name" xml:space="preserve">
-    <value>label7</value>
+  <data name="&gt;&gt;label14.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="label12.Text" xml:space="preserve">
     <value>[s]</value>
   </data>
   <data name="outputBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 313</value>
+    <value>16, 406</value>
   </data>
   <data name="label8.Text" xml:space="preserve">
     <value>再生オフセット</value>
@@ -339,11 +375,17 @@
   <data name="&gt;&gt;outputBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
+  <data name="&gt;&gt;colorBackButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
   <data name="&gt;&gt;label5.Name" xml:space="preserve">
     <value>label5</value>
   </data>
   <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
     <value>90, 13</value>
+  </data>
+  <data name="soundFileBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>119, 179</value>
   </data>
   <data name="&gt;&gt;levelDropDown.Name" xml:space="preserve">
     <value>levelDropDown</value>
@@ -351,26 +393,47 @@
   <data name="titleBox.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
   </data>
+  <data name="&gt;&gt;label14.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 99</value>
+  </data>
+  <data name="colorBackButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>178, 23</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 17</value>
   </data>
-  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>73, 13</value>
+  <data name="colorAccentButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>178, 23</value>
+  </data>
+  <data name="label14.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="hasPaddingBarBox.TabIndex" type="System.Int32, mscorlib">
+    <value>27</value>
+  </data>
+  <data name="label10.TabIndex" type="System.Int32, mscorlib">
+    <value>28</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ExportForm</value>
   </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="label13.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 294</value>
+  </data>
   <data name="&gt;&gt;label4.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="exportButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom</value>
+  <data name="&gt;&gt;jacketFileBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;difficultyDropDown.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="colorBackButton.TabIndex" type="System.Int32, mscorlib">
+    <value>32</value>
   </data>
   <data name="jacketFileBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>178, 20</value>
@@ -384,8 +447,8 @@
   <data name="&gt;&gt;notesDesignerBox.Name" xml:space="preserve">
     <value>notesDesignerBox</value>
   </data>
-  <data name="&gt;&gt;songIdBox.Name" xml:space="preserve">
-    <value>songIdBox</value>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+    <value>26</value>
   </data>
   <data name="&gt;&gt;browseButton.Parent" xml:space="preserve">
     <value>$this</value>
@@ -393,29 +456,38 @@
   <data name="&gt;&gt;label7.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;hasPaddingBarBox.Name" xml:space="preserve">
-    <value>hasPaddingBarBox</value>
+  <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="hasPaddingBarBox.Text" xml:space="preserve">
+    <value>先頭に1小節の空白を挿入する</value>
+  </data>
+  <data name="colorBackButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>119, 318</value>
   </data>
   <data name="&gt;&gt;levelDropDown.Type" xml:space="preserve">
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="exportButton.TabIndex" type="System.Int32, mscorlib">
+    <value>26</value>
+  </data>
   <data name="exportButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 348</value>
+    <value>16, 437</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
     <value>59, 13</value>
   </data>
   <data name="&gt;&gt;browseButton.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>20</value>
   </data>
   <data name="&gt;&gt;hasPaddingBarBox.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>6</value>
   </data>
   <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 208</value>
   </data>
-  <data name="&gt;&gt;outputBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="artistBox.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
   </data>
   <data name="&gt;&gt;songIdBox.Parent" xml:space="preserve">
     <value>$this</value>
@@ -423,20 +495,26 @@
   <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 127</value>
   </data>
+  <data name="&gt;&gt;label14.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colorBackButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;label2.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="label9.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
-  <data name="&gt;&gt;label9.Name" xml:space="preserve">
-    <value>label9</value>
+  <data name="&gt;&gt;difficultyDropDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;soundOffsetBox.Name" xml:space="preserve">
     <value>soundOffsetBox</value>
   </data>
-  <data name="difficultyDropDown.Location" type="System.Drawing.Point, System.Drawing">
-    <value>178, 95</value>
+  <data name="&gt;&gt;outputBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="hasPaddingBarBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>175, 17</value>
@@ -444,11 +522,20 @@
   <data name="soundOffsetBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>67, 20</value>
   </data>
+  <data name="&gt;&gt;soundOffsetBox.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
   <data name="label12.TabIndex" type="System.Int32, mscorlib">
     <value>23</value>
   </data>
+  <data name="&gt;&gt;colorBackButton.Name" xml:space="preserve">
+    <value>colorBackButton</value>
+  </data>
   <data name="&gt;&gt;outputBox.Name" xml:space="preserve">
     <value>outputBox</value>
+  </data>
+  <data name="&gt;&gt;colorForeButton.Name" xml:space="preserve">
+    <value>colorForeButton</value>
   </data>
   <data name="label9.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -466,13 +553,16 @@
     <value>17</value>
   </data>
   <data name="browseButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>305, 311</value>
+    <value>305, 404</value>
+  </data>
+  <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 323</value>
   </data>
   <data name="songIdBox.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
   </data>
-  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="colorForeButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>119, 289</value>
   </data>
   <data name="soundFileBox.TabIndex" type="System.Int32, mscorlib">
     <value>20</value>
@@ -486,26 +576,35 @@
   <data name="label9.Text" xml:space="preserve">
     <value>ジャケットファイル名</value>
   </data>
-  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
-    <value>20</value>
+  <data name="&gt;&gt;label12.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="label7.Text" xml:space="preserve">
     <value>サウンドファイル名</value>
   </data>
+  <data name="label13.TabIndex" type="System.Int32, mscorlib">
+    <value>29</value>
+  </data>
   <data name="&gt;&gt;notesDesignerBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="&gt;&gt;label12.Name" xml:space="preserve">
     <value>label12</value>
   </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="&gt;&gt;difficultyDropDown.ZOrder" xml:space="preserve">
+    <value>14</value>
   </data>
   <data name="levelDropDown.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
   </data>
-  <data name="&gt;&gt;outputBox.ZOrder" xml:space="preserve">
-    <value>3</value>
+  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 72</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -513,14 +612,14 @@
   <data name="notesDesignerBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>178, 20</value>
   </data>
+  <data name="&gt;&gt;colorAccentButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
   <data name="label6.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
-  <data name="&gt;&gt;difficultyDropDown.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
   <data name="&gt;&gt;soundFileBox.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>11</value>
   </data>
   <data name="&gt;&gt;hasPaddingBarBox.Parent" xml:space="preserve">
     <value>$this</value>
@@ -531,14 +630,23 @@
   <data name="label6.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="&gt;&gt;label9.Name" xml:space="preserve">
+    <value>label9</value>
+  </data>
   <data name="&gt;&gt;difficultyDropDown.Name" xml:space="preserve">
     <value>difficultyDropDown</value>
   </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
   <data name="outputBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>281, 20</value>
+  </data>
+  <data name="&gt;&gt;colorAccentButton.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="label14.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="&gt;&gt;label7.Parent" xml:space="preserve">
     <value>$this</value>
@@ -546,11 +654,17 @@
   <data name="soundFileBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>178, 20</value>
   </data>
+  <data name="colorBackButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="&gt;&gt;label13.Name" xml:space="preserve">
+    <value>label13</value>
+  </data>
   <data name="&gt;&gt;hasPaddingBarBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>19</value>
   </data>
   <data name="&gt;&gt;label6.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -558,8 +672,11 @@
   <data name="&gt;&gt;label1.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;colorForeButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="difficultyDropDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>119, 21</value>
   </data>
   <data name="&gt;&gt;label3.Name" xml:space="preserve">
     <value>label3</value>
@@ -573,29 +690,41 @@
   <data name="songIdBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>178, 20</value>
   </data>
+  <data name="colorAccentButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="&gt;&gt;exportButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="label8.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="&gt;&gt;soundOffsetBox.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="jacketFileBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>119, 233</value>
   </data>
   <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 182</value>
   </data>
-  <data name="jacketFileBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>119, 233</value>
+  <data name="&gt;&gt;soundFileBox.Name" xml:space="preserve">
+    <value>soundFileBox</value>
   </data>
   <data name="&gt;&gt;label8.Name" xml:space="preserve">
     <value>label8</value>
   </data>
   <data name="&gt;&gt;titleBox.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>17</value>
+  </data>
+  <data name="label14.Text" xml:space="preserve">
+    <value>アクセント色</value>
+  </data>
+  <data name="&gt;&gt;colorDialog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColorDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label13.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>25</value>
   </data>
   <data name="&gt;&gt;exportButton.Name" xml:space="preserve">
     <value>exportButton</value>
@@ -606,8 +735,14 @@
   <data name="soundOffsetBox.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
   </data>
-  <data name="&gt;&gt;soundOffsetBox.ZOrder" xml:space="preserve">
-    <value>12</value>
+  <data name="label13.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;notesDesignerBox.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;colorForeButton.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="label5.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -618,20 +753,23 @@
   <data name="label1.Text" xml:space="preserve">
     <value>タイトル</value>
   </data>
-  <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 236</value>
-  </data>
-  <data name="difficultyDropDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>119, 21</value>
+  <data name="label8.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
   </data>
   <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
     <value>49, 13</value>
   </data>
-  <data name="hasPaddingBarBox.TabIndex" type="System.Int32, mscorlib">
-    <value>27</value>
+  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;artistBox.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>16</value>
+  </data>
+  <data name="label13.Text" xml:space="preserve">
+    <value>前景色</value>
   </data>
   <data name="&gt;&gt;label2.Name" xml:space="preserve">
     <value>label2</value>
@@ -646,7 +784,7 @@
     <value>14, 44</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>398, 386</value>
+    <value>398, 475</value>
   </data>
   <data name="&gt;&gt;titleBox.Name" xml:space="preserve">
     <value>titleBox</value>
@@ -654,35 +792,56 @@
   <data name="&gt;&gt;artistBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;label7.Name" xml:space="preserve">
+    <value>label7</value>
   </data>
   <data name="label11.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 290</value>
+    <value>14, 383</value>
   </data>
   <data name="label12.Location" type="System.Drawing.Point, System.Drawing">
     <value>303, 208</value>
   </data>
   <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
-    <value>18</value>
+    <value>24</value>
+  </data>
+  <data name="&gt;&gt;label14.Name" xml:space="preserve">
+    <value>label14</value>
+  </data>
+  <data name="label14.TabIndex" type="System.Int32, mscorlib">
+    <value>30</value>
   </data>
   <data name="&gt;&gt;soundFileBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="label14.Size" type="System.Drawing.Size, System.Drawing">
+    <value>63, 13</value>
   </data>
   <data name="&gt;&gt;label11.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>21</value>
+    <value>27</value>
+  </data>
+  <data name="label14.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 352</value>
   </data>
   <data name="&gt;&gt;notesDesignerBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="label8.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
+  <data name="&gt;&gt;colorBackButton.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="exportButton.TabIndex" type="System.Int32, mscorlib">
-    <value>26</value>
+  <data name="&gt;&gt;hasPaddingBarBox.Name" xml:space="preserve">
+    <value>hasPaddingBarBox</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;soundOffsetBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="colorForeButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>178, 23</value>
   </data>
   <data name="notesDesignerBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>119, 68</value>
@@ -690,10 +849,19 @@
   <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
     <value>43, 13</value>
   </data>
-  <data name="&gt;&gt;jacketFileBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="difficultyDropDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>178, 95</value>
+  </data>
+  <data name="&gt;&gt;colorAccentButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>43, 13</value>
+  </data>
+  <data name="colorAccentButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>119, 347</value>
+  </data>
+  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
     <value>43, 13</value>
   </data>
   <data name="exportButton.Size" type="System.Drawing.Size, System.Drawing">
@@ -711,7 +879,7 @@
   <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 155</value>
   </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label4.Text" xml:space="preserve">
@@ -720,9 +888,9 @@
   <data name="levelDropDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>178, 124</value>
   </data>
-  <data name="artistBox.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
-  </data>
+  <metadata name="colorDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

@@ -268,6 +268,9 @@
     <value>Widen Lane Width</value>
   </data>
   <data name="SwapSidesSelectedNotes" xml:space="preserve">
-    <value>Swap Sides of Selected Notes</value>
+    <value>Swap Feet of Selected Notes</value>
+  </data>
+  <data name="PasteFlippedSwapped" xml:space="preserve">
+    <value>Paste Flipped with Feet Swapped</value>
   </data>
 </root>

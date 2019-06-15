@@ -69,6 +69,9 @@ namespace Ched.UI
             soundOffsetBox.Value = args.SoundOffset;
             jacketFileBox.Text = args.JacketFilePath;
             hasPaddingBarBox.Checked = args.HasPaddingBar;
+            colorForeButton.BackColor = args.ColorFore.A == 0 ? Color.White : args.ColorFore;
+            colorBackButton.BackColor = args.ColorBack.A == 0 ? Color.Black : args.ColorBack;
+            colorAccentButton.BackColor = args.ColorAccent.A == 0 ? Color.Gray : args.ColorAccent;
 
             browseButton.Click += (s, e) =>
             {
@@ -101,6 +104,9 @@ namespace Ched.UI
                 args.SoundOffset = soundOffsetBox.Value;
                 args.JacketFilePath = jacketFileBox.Text;
                 args.HasPaddingBar = hasPaddingBarBox.Checked;
+                args.ColorFore = colorForeButton.BackColor;
+                args.ColorBack = colorBackButton.BackColor;
+                args.ColorAccent = colorAccentButton.BackColor;
 
                 try
                 {
@@ -115,6 +121,27 @@ namespace Ched.UI
                     Program.DumpException(ex);
                 }
             };
+        }
+
+        private void colorForeButton_Click(object sender, EventArgs e)
+        {
+            colorDialog.Color = colorForeButton.BackColor;
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+                colorForeButton.BackColor = colorDialog.Color;
+        }
+
+        private void colorBackButton_Click(object sender, EventArgs e)
+        {
+            colorDialog.Color = colorBackButton.BackColor;
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+                colorBackButton.BackColor = colorDialog.Color;
+        }
+
+        private void colorAccentButton_Click(object sender, EventArgs e)
+        {
+            colorDialog.Color = colorAccentButton.BackColor;
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+                colorAccentButton.BackColor = colorDialog.Color;
         }
     }
 }

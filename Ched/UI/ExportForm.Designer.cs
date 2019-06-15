@@ -53,6 +53,13 @@
             this.label12 = new System.Windows.Forms.Label();
             this.exportButton = new System.Windows.Forms.Button();
             this.hasPaddingBarBox = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.colorForeButton = new System.Windows.Forms.Button();
+            this.colorBackButton = new System.Windows.Forms.Button();
+            this.colorAccentButton = new System.Windows.Forms.Button();
+            this.colorDialog = new System.Windows.Forms.ColorDialog();
             ((System.ComponentModel.ISupportInitialize)(this.soundOffsetBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -198,10 +205,52 @@
             this.hasPaddingBarBox.Name = "hasPaddingBarBox";
             this.hasPaddingBarBox.UseVisualStyleBackColor = true;
             // 
+            // label10
+            // 
+            resources.ApplyResources(this.label10, "label10");
+            this.label10.Name = "label10";
+            // 
+            // label13
+            // 
+            resources.ApplyResources(this.label13, "label13");
+            this.label13.Name = "label13";
+            // 
+            // label14
+            // 
+            resources.ApplyResources(this.label14, "label14");
+            this.label14.Name = "label14";
+            // 
+            // colorForeButton
+            // 
+            resources.ApplyResources(this.colorForeButton, "colorForeButton");
+            this.colorForeButton.Name = "colorForeButton";
+            this.colorForeButton.UseVisualStyleBackColor = true;
+            this.colorForeButton.Click += new System.EventHandler(this.colorForeButton_Click);
+            // 
+            // colorBackButton
+            // 
+            resources.ApplyResources(this.colorBackButton, "colorBackButton");
+            this.colorBackButton.Name = "colorBackButton";
+            this.colorBackButton.UseVisualStyleBackColor = true;
+            this.colorBackButton.Click += new System.EventHandler(this.colorBackButton_Click);
+            // 
+            // colorAccentButton
+            // 
+            resources.ApplyResources(this.colorAccentButton, "colorAccentButton");
+            this.colorAccentButton.Name = "colorAccentButton";
+            this.colorAccentButton.UseVisualStyleBackColor = true;
+            this.colorAccentButton.Click += new System.EventHandler(this.colorAccentButton_Click);
+            // 
             // ExportForm
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.colorAccentButton);
+            this.Controls.Add(this.colorBackButton);
+            this.Controls.Add(this.colorForeButton);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.hasPaddingBarBox);
             this.Controls.Add(this.exportButton);
             this.Controls.Add(this.label12);
@@ -262,5 +311,12 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button exportButton;
         private System.Windows.Forms.CheckBox hasPaddingBarBox;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button colorForeButton;
+        private System.Windows.Forms.Button colorBackButton;
+        private System.Windows.Forms.Button colorAccentButton;
+        private System.Windows.Forms.ColorDialog colorDialog;
     }
 }

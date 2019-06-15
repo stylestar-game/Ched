@@ -268,6 +268,9 @@
     <value>レーン幅を広げる</value>
   </data>
   <data name="SwapSidesSelectedNotes" xml:space="preserve">
-    <value>Swap Sides of Selected Notes</value>
+    <value>選択範囲の足の左右を反転</value>
+  </data>
+  <data name="PasteFlippedSwapped" xml:space="preserve">
+    <value>反転と足の左右反転を同時に貼り付け</value>
   </data>
 </root>
