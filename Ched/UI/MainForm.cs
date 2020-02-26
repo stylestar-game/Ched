@@ -97,7 +97,6 @@ namespace Ched.UI
 
             PreviewManager = new SoundPreviewManager(NoteView);
             PreviewManager.IsStopAtLastNote = ApplicationSettings.Default.IsPreviewAbortAtLastNote;
-            PreviewManager.Finished += (s, e) => NoteView.Editable = CanEdit;
             PreviewManager.TickUpdated += (s, e) => NoteView.CurrentTick = e.Tick;
             PreviewManager.ExceptionThrown += (s, e) => MessageBox.Show(this, ErrorStrings.PreviewException, Program.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -145,6 +144,8 @@ namespace Ched.UI
                 }
             };
 
+            NoteView.NewNoteTypeChanged += (s, e) => NoteView.EditMode = EditMode.Edit;
+
             AllowDrop = true;
             DragEnter += (s, e) =>
             {
@@ -177,11 +178,11 @@ namespace Ched.UI
             using (var manager = this.WorkWithLayout())
             {
                 this.Menu = CreateMainMenu(NoteView);
+                this.Controls.Add(NoteView);
                 this.Controls.Add(NoteViewScrollBar);
                 this.Controls.Add(activeToolStrip = CreateNewNoteTypeSSFToolStrip(NoteView));
                 //this.Controls.Add(CreateNewNoteTypeToolStrip(NoteView));
                 this.Controls.Add(CreateMainToolStrip(NoteView));
-                this.Controls.Add(NoteView);
             }
 
             NoteView.NewNoteType = NoteType.Tap;
@@ -658,6 +659,7 @@ namespace Ched.UI
                     isAbortAtLastNoteItem.Enabled = true;
                     PreviewManager.Finished -= lambda;
                     noteView.CurrentTick = startTick;
+                    noteView.Editable = CanEdit;
                 };
 
                 try
