@@ -49,8 +49,11 @@ namespace Ched.Drawing
         public GradientColor MotionDownColor { get; set; }
         public GradientColor SlideStepLeftBackgroundColor { get; set; }
         public GradientColor SlideStepLeftColor { get; set; }
+        public GradientColor SlideStepLeftConnectorColor { get; set; }
         public GradientColor SlideStepRightBackgroundColor { get; set; }
         public GradientColor SlideStepRightColor { get; set; }
+        public GradientColor SlideStepRightConnectorColor { get; set; }
+        public GradientColor ShuffleBorderColor { get; set; }
         // End SSF
     }
 }

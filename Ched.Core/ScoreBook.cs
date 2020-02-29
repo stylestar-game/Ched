@@ -165,6 +165,29 @@ namespace Ched.Core
                 res.Score.Events.TimeSignatureChangeEvents.Add(new Events.TimeSignatureChangeEvent() { Tick = 0, Numerator = 4, DenominatorExponent = 2 });
             }
 
+            // SSF Mods
+            // If SSF version is less than 2.6.3.1, convert all previous shuffles to new format
+            // Possible to date (2020-02-27) are 2.3.0.0, 2.3.1.0, and 2.6.1.1
+            if (fileVersion.Major < 3 && fileVersion.Minor <= 6 && fileVersion.Build < 3)
+            {
+                List<Notes.SlideStep> newSlides = new List<Notes.SlideStep>();
+                foreach (var note in res.Score.Notes.SlideSteps)
+                {
+                    var slide = new Notes.SlideStep() { StartTick = note.StartTick, StartWidth = note.StartWidth, Side = note.Side };
+                    slide.StartLaneIndex = note.StartLaneIndex;
+                    foreach (var step in note.StepNotes)
+                    {
+                        var shuffle = new Notes.ShuffleStep(slide) { TickOffset = step.TickOffset, LaneIndexOffset = step.LaneIndexOffset, WidthChange = step.WidthChange };
+                        if (step.IsVisible)
+                            shuffle.ShuffleType = Notes.ShuffleType.Simple;
+                        slide.StepNotes.Add(shuffle);
+                    }
+                    newSlides.Add(slide);
+                }
+                res.score.Notes.SlideSteps = newSlides;
+            }
+            // End SSF Mods
+
             res.Path = path;
             return res;
         }

@@ -410,9 +410,12 @@ namespace Ched.UI
                 MotionUpColor = new GradientColor(Color.FromArgb(40, 174, 187), Color.FromArgb(88, 241, 254)),
                 MotionDownColor = new GradientColor(Color.FromArgb(197, 192, 68), Color.FromArgb(250, 244, 150)),
                 SlideStepLeftColor = new GradientColor(Color.FromArgb(254, 96, 0), Color.FromArgb(255, 253, 83)),
+                SlideStepLeftConnectorColor = new GradientColor(Color.FromArgb(200, 254, 96, 0), Color.FromArgb(200, 255, 253, 83)),
                 SlideStepLeftBackgroundColor = new GradientColor(Color.FromArgb(200, 199, 71, 14), Color.FromArgb(200, 247, 88, 4)),
                 SlideStepRightColor = new GradientColor(Color.FromArgb(0, 103, 255), Color.FromArgb(80, 242, 255)),
-                SlideStepRightBackgroundColor = new GradientColor(Color.FromArgb(200, 59, 105, 160), Color.FromArgb(200, 12, 156, 243))
+                SlideStepRightConnectorColor = new GradientColor(Color.FromArgb(200, 0, 103, 255), Color.FromArgb(200, 80, 242, 255)),
+                SlideStepRightBackgroundColor = new GradientColor(Color.FromArgb(200, 59, 105, 160), Color.FromArgb(200, 12, 156, 243)),
+                ShuffleBorderColor = new GradientColor(Color.FromArgb(204, 192, 0), Color.FromArgb(255, 236, 68))
                 // End SSF
             };
 
@@ -452,6 +455,11 @@ namespace Ched.UI
                         .SelectMany(q => q.StepNotes.OrderByDescending(r => r.TickOffset).Concat(new LongNoteTapBase[] { q.StartNote }))
                         .Where(q => visibleTick(q.Tick))
                         .Select(q => GetClickableRectFromNotePosition(q.Tick, q.LaneIndex, q.Width));
+
+                    var shuffleSteps = Notes.SlideSteps.Reverse()
+                        .SelectMany(q => q.StepNotes.OrderByDescending(r => r.TickOffset))
+                        .Where(q => visibleTick(q.Tick)).Where(q => q is ShuffleStep && ((ShuffleStep)q).ShuffleType == ShuffleType.Complex)
+                        .Select(q => GetClickableRectFromNotePosition(q.Tick, ((ShuffleStep)q).EndLaneIndex, ((ShuffleStep)q).EndWidth));
                     // End SSF
 
                     var slides = Notes.Slides.Reverse()
@@ -466,7 +474,7 @@ namespace Ched.UI
                         return;
                     }
 
-                    foreach (RectangleF rect in shortNotes.Concat(slides).Concat(slideSteps))   // SSF mod
+                    foreach (RectangleF rect in shortNotes.Concat(slides).Concat(slideSteps).Concat(shuffleSteps))   // SSF mod
                     {
                         if (!rect.Contains(pos)) continue;
                         RectangleF left = rect.GetLeftThumb(EdgeHitWidthRate, MinimumEdgeHitWidth);
@@ -904,6 +912,233 @@ namespace Ched.UI
                         return null;
                     };
 
+                    // SSF
+                    Func<ShuffleStep, IObservable<MouseEventArgs>> leftEndSlideStepNoteHandler = step =>
+                    {
+                        var beforeStepPos = new MoveEndSlideStepNoteOperation.NotePosition(step.TickOffset, step.EndLaneIndexOffset, step.EndWidthChange);
+
+                        return mouseMove
+                            .TakeUntil(mouseUp)
+                            .Do(q =>
+                            {
+                                var currentScorePos = GetDrawingMatrix(new Matrix()).GetInvertedMatrix().TransformPoint(q.Location);
+                                int xdiff = (int)((currentScorePos.X - scorePos.X) / (UnitLaneWidth + BorderThickness));
+                                int laneIndexOffset = beforeStepPos.LaneIndexOffset + xdiff;
+                                int widthChange = beforeStepPos.WidthChange - xdiff;
+                                laneIndexOffset = Math.Min(beforeStepPos.LaneIndexOffset + step.ParentNote.StartWidth + beforeStepPos.WidthChange - 1, Math.Max(-step.ParentNote.StartLaneIndex, laneIndexOffset));
+                                widthChange = Math.Min(step.ParentNote.StartLaneIndex + beforeStepPos.LaneIndexOffset + step.ParentNote.StartWidth + beforeStepPos.WidthChange - step.ParentNote.StartWidth, Math.Max(-step.ParentNote.StartWidth + 1, widthChange));
+                                step.SetEndPosition(laneIndexOffset, widthChange);
+                                Cursor.Current = Cursors.SizeWE;
+                            })
+                            .Finally(() =>
+                            {
+                                Cursor.Current = Cursors.Default;
+                                var afterPos = new MoveEndSlideStepNoteOperation.NotePosition(step.TickOffset, step.EndLaneIndexOffset, step.EndWidthChange);
+                                if (beforeStepPos == afterPos) return;
+                                OperationManager.Push(new MoveEndSlideStepNoteOperation(step, beforeStepPos, afterPos));
+                            });
+                    };
+
+                    Func<ShuffleStep, IObservable<MouseEventArgs>> rightEndSlideStepNoteHandler = step =>
+                    {
+                        var beforeStepPos = new MoveEndSlideStepNoteOperation.NotePosition(step.TickOffset, step.EndLaneIndexOffset, step.EndWidthChange);
+
+                        return mouseMove
+                            .TakeUntil(mouseUp)
+                            .Do(q =>
+                            {
+                                var currentScorePos = GetDrawingMatrix(new Matrix()).GetInvertedMatrix().TransformPoint(q.Location);
+                                int xdiff = (int)((currentScorePos.X - scorePos.X) / (UnitLaneWidth + BorderThickness));
+                                int widthChange = beforeStepPos.WidthChange + xdiff;
+                                step.EndWidthChange = Math.Min(Constants.LanesCount - step.EndLaneIndex - step.ParentNote.StartWidth, Math.Max(-step.ParentNote.StartWidth + 1, widthChange));
+                                Cursor.Current = Cursors.SizeWE;
+                            })
+                            .Finally(() =>
+                            {
+                                Cursor.Current = Cursors.Default;
+                                var afterPos = new MoveEndSlideStepNoteOperation.NotePosition(step.TickOffset, step.EndLaneIndexOffset, step.EndWidthChange);
+                                if (beforeStepPos == afterPos) return;
+                                OperationManager.Push(new MoveEndSlideStepNoteOperation(step, beforeStepPos, afterPos));
+                            });
+                    };
+
+                    // 挿入時のハンドラにも流用するのでFinallyつけられない
+                    Func<ShuffleStep, IObservable<MouseEventArgs>> moveEndSlideStepNoteHandler = step =>
+                    {
+                        var beforeStepPos = new MoveEndSlideStepNoteOperation.NotePosition(step.TickOffset, step.EndLaneIndexOffset, step.EndWidthChange);
+                        var offsets = new HashSet<int>(step.ParentNote.StepNotes.Select(q => q.TickOffset));
+                        bool isMaxOffsetStep = step.TickOffset == offsets.Max();
+                        offsets.Remove(step.TickOffset);
+                        int maxOffset = offsets.OrderByDescending(q => q).FirstOrDefault();
+                        return mouseMove
+                            .TakeUntil(mouseUp)
+                            .Do(q =>
+                            {
+                                var currentScorePos = GetDrawingMatrix(new Matrix()).GetInvertedMatrix().TransformPoint(q.Location);
+                                int offset = GetQuantizedTick(GetTickFromYPosition(currentScorePos.Y)) - step.ParentNote.StartTick;
+                                int xdiff = (int)((currentScorePos.X - scorePos.X) / (UnitLaneWidth + BorderThickness));
+                                int laneIndexOffset = beforeStepPos.LaneIndexOffset + xdiff;
+                                step.EndLaneIndexOffset = Math.Min(Constants.LanesCount - step.EndWidth - step.ParentNote.StartLaneIndex, Math.Max(-step.ParentNote.StartLaneIndex, laneIndexOffset));
+                                // 最終Step以降に移動はさせないし同じTickに置かせもしない
+                                if ((!isMaxOffsetStep && offset > maxOffset) || offsets.Contains(offset) || offset <= 0) return;
+                                // 最終Stepは手前のStepより前に動かさない……
+                                if (isMaxOffsetStep && offset <= maxOffset) return;
+                                step.TickOffset = offset;
+                                Cursor.Current = Cursors.SizeAll;
+                            });
+                    };
+
+                    Func<Slide, IObservable<MouseEventArgs>> slideStepHandler = slide =>
+                    {
+                        foreach (var step in slide.StepNotes.OrderByDescending(q => q.TickOffset))
+                        {
+                            RectangleF stepRect = GetClickableRectFromNotePosition(step.Tick, step.LaneIndex, step.Width);
+                            var beforeStepPos = new MoveSlideStepNoteOperation.NotePosition(step.TickOffset, step.LaneIndexOffset, step.WidthChange);
+                            var shuffleStep = step as ShuffleStep;
+                            RectangleF shuffleEndRect = new RectangleF();
+                            MoveEndSlideStepNoteOperation.NotePosition beforeStepEndPos = new MoveEndSlideStepNoteOperation.NotePosition();
+                            if(shuffleStep != null && shuffleStep.ShuffleType == ShuffleType.Complex)
+                            {
+                                shuffleEndRect = GetClickableRectFromNotePosition(shuffleStep.Tick, shuffleStep.EndLaneIndex, shuffleStep.EndWidth);
+                                beforeStepEndPos = new MoveEndSlideStepNoteOperation.NotePosition(shuffleStep.TickOffset, shuffleStep.EndLaneIndexOffset, shuffleStep.EndWidthChange);
+                            }
+
+                            // Edges need to take precedent over move operations
+                            if (stepRect.Contains(scorePos))
+                            {
+                                if (stepRect.GetLeftThumb(EdgeHitWidthRate, MinimumEdgeHitWidth).Contains(scorePos))
+                                {
+                                    return leftSlideStepNoteHandler(step);
+                                }
+
+                                if (stepRect.GetRightThumb(EdgeHitWidthRate, MinimumEdgeHitWidth).Contains(scorePos))
+                                {
+                                    return rightSlideStepNoteHandler(step);
+                                }
+                            }
+
+                            if(shuffleEndRect.Contains(scorePos))
+                            {
+                                if (shuffleEndRect.GetLeftThumb(EdgeHitWidthRate, MinimumEdgeHitWidth).Contains(scorePos))
+                                {
+                                    return leftEndSlideStepNoteHandler(shuffleStep);
+                                }
+
+                                if (shuffleEndRect.GetRightThumb(EdgeHitWidthRate, MinimumEdgeHitWidth).Contains(scorePos))
+                                {
+                                    return rightEndSlideStepNoteHandler(shuffleStep);
+                                }
+                            }
+
+                            if (stepRect.Contains(scorePos))
+                            {
+                                return moveSlideStepNoteHandler(step)
+                                          .Finally(() =>
+                                          {
+                                              Cursor.Current = Cursors.Default;
+                                              var afterPos = new MoveSlideStepNoteOperation.NotePosition(step.TickOffset, step.LaneIndexOffset, step.WidthChange);
+                                              if (beforeStepPos == afterPos) return;
+                                              OperationManager.Push(new MoveSlideStepNoteOperation(step, beforeStepPos, afterPos));
+                                          });
+                            }
+                            
+                            if(shuffleEndRect.Contains(scorePos))
+                            {
+                                return moveEndSlideStepNoteHandler(shuffleStep)
+                                          .Finally(() =>
+                                          {
+                                              Cursor.Current = Cursors.Default;
+                                              var afterPos = new MoveEndSlideStepNoteOperation.NotePosition(step.TickOffset, shuffleStep.EndLaneIndexOffset, shuffleStep.EndWidthChange);
+                                              if (beforeStepEndPos == afterPos) return;
+                                              OperationManager.Push(new MoveEndSlideStepNoteOperation(shuffleStep, beforeStepEndPos, afterPos));
+                                          });
+                            }
+                        }
+
+                        RectangleF startRect = GetClickableRectFromNotePosition(slide.StartNote.Tick, slide.StartNote.LaneIndex, slide.StartNote.Width);
+
+                        int leftStepLaneIndexOffset = Math.Min(0, slide.StepNotes.Min(q => q.LaneIndexOffset));
+                        int rightStepLaneIndexOffset = Math.Max(0, slide.StepNotes.Max(q => q.LaneIndexOffset + q.WidthChange)); // 最も右にあるStepNoteの右端に対するStartNoteの右端からのオフセット
+                        int minWidthChange = Math.Min(0, slide.StepNotes.Min(q => q.WidthChange));
+
+                        var beforePos = new MoveSlideOperation.NotePosition(slide.StartTick, slide.StartLaneIndex, slide.StartWidth);
+                        if (startRect.GetLeftThumb(EdgeHitWidthRate, MinimumEdgeHitWidth).Contains(scorePos))
+                        {
+                            return mouseMove
+                                .TakeUntil(mouseUp)
+                                .Do(q =>
+                                {
+                                    var currentScorePos = GetDrawingMatrix(new Matrix()).GetInvertedMatrix().TransformPoint(q.Location);
+                                    int xdiff = (int)((currentScorePos.X - scorePos.X) / (UnitLaneWidth + BorderThickness));
+                                    xdiff = Math.Min(beforePos.StartWidth + minWidthChange - 1, Math.Max(-beforePos.StartLaneIndex - leftStepLaneIndexOffset, xdiff));
+                                    int width = beforePos.StartWidth - xdiff;
+                                    int laneIndex = beforePos.StartLaneIndex + xdiff;
+                                    // clamp
+                                    width = Math.Min(Constants.LanesCount - slide.StartLaneIndex - leftStepLaneIndexOffset, Math.Max(-minWidthChange + 1, width));
+                                    laneIndex = Math.Min(Constants.LanesCount - rightStepLaneIndexOffset, Math.Max(-leftStepLaneIndexOffset - beforePos.StartLaneIndex, laneIndex));
+                                    slide.SetPosition(laneIndex, width);
+                                    Cursor.Current = Cursors.SizeWE;
+                                })
+                                .Finally(() =>
+                                {
+                                    Cursor.Current = Cursors.Default;
+                                    LastWidth = slide.StartWidth;
+                                    var afterPos = new MoveSlideOperation.NotePosition(slide.StartTick, slide.StartLaneIndex, slide.StartWidth);
+                                    if (beforePos == afterPos) return;
+                                    OperationManager.Push(new MoveSlideOperation(slide, beforePos, afterPos));
+                                });
+                        }
+
+                        if (startRect.GetRightThumb(EdgeHitWidthRate, MinimumEdgeHitWidth).Contains(scorePos))
+                        {
+                            return mouseMove
+                                .TakeUntil(mouseUp)
+                                .Do(q =>
+                                {
+                                    var currentScorePos = GetDrawingMatrix(new Matrix()).GetInvertedMatrix().TransformPoint(q.Location);
+                                    int xdiff = (int)((currentScorePos.X - scorePos.X) / (UnitLaneWidth + BorderThickness));
+                                    int width = beforePos.StartWidth + xdiff;
+                                    slide.StartWidth = Math.Min(Constants.LanesCount - slide.StartLaneIndex - rightStepLaneIndexOffset, Math.Max(-minWidthChange + 1, width));
+                                    Cursor.Current = Cursors.SizeWE;
+                                })
+                                .Finally(() =>
+                                {
+                                    Cursor.Current = Cursors.Default;
+                                    LastWidth = slide.StartWidth;
+                                    var afterPos = new MoveSlideOperation.NotePosition(slide.StartTick, slide.StartLaneIndex, slide.StartWidth);
+                                    if (beforePos == afterPos) return;
+                                    OperationManager.Push(new MoveSlideOperation(slide, beforePos, afterPos));
+                                });
+                        }
+
+                        if (startRect.Contains(scorePos))
+                        {
+                            int beforeLaneIndex = slide.StartNote.LaneIndex;
+                            return mouseMove
+                                .TakeUntil(mouseUp)
+                                .Do(q =>
+                                {
+                                    var currentScorePos = GetDrawingMatrix(new Matrix()).GetInvertedMatrix().TransformPoint(q.Location);
+                                    slide.StartTick = Math.Max(GetQuantizedTick(GetTickFromYPosition(currentScorePos.Y)), 0);
+                                    int xdiff = (int)((currentScorePos.X - scorePos.X) / (UnitLaneWidth + BorderThickness));
+                                    int laneIndex = beforeLaneIndex + xdiff;
+                                    slide.StartLaneIndex = Math.Min(Constants.LanesCount - slide.StartWidth - rightStepLaneIndexOffset, Math.Max(-leftStepLaneIndexOffset, laneIndex));
+                                    Cursor.Current = Cursors.SizeAll;
+                                })
+                                .Finally(() =>
+                                {
+                                    Cursor.Current = Cursors.Default;
+                                    LastWidth = slide.StartWidth;
+                                    var afterPos = new MoveSlideOperation.NotePosition(slide.StartTick, slide.StartLaneIndex, slide.StartWidth);
+                                    if (beforePos == afterPos) return;
+                                    OperationManager.Push(new MoveSlideOperation(slide, beforePos, afterPos));
+                                });
+                        }
+
+                        return null;
+                    };
+                    // End SSF
+
                     Func<Hold, IObservable<MouseEventArgs>> holdHandler = hold =>
                     {
                         // HOLD長さ変更
@@ -1048,7 +1283,7 @@ namespace Ched.UI
 
                         foreach (var note in Notes.SlideSteps.Reverse().Where(q => q.StartTick <= tailTick && q.StartTick + q.GetDuration() >= HeadTick))
                         {
-                            var subscription = slideHandler(note);
+                            var subscription = slideStepHandler(note);
                             if (subscription != null) return subscription;
                         }
                         // End SSF
@@ -1309,13 +1544,40 @@ namespace Ched.UI
                                     var bg = new SlideStep.TapBase[] { note.StartNote }.Concat(note.StepNotes.OrderBy(q => q.Tick)).ToList();
                                     for (int i = 0; i < bg.Count - 1; i++)
                                     {
+                                        // Get path based on notes
+                                        var startShuffleType = (bg[i] as ShuffleStep)?.ShuffleType;
+                                        var endShuffleType = (bg[i + 1] as ShuffleStep)?.ShuffleType;
+                                        int startLaneIndex, startWidth, endLaneIndex, endWidth;
+                                        switch (startShuffleType)
+                                        {
+                                            case ShuffleType.Complex:
+                                                startLaneIndex = (bg[i] as ShuffleStep).EndLaneIndex;
+                                                startWidth = (bg[i] as ShuffleStep).EndWidth;
+                                                break;
+                                            default:
+                                                startLaneIndex = bg[i].LaneIndex;
+                                                startWidth = bg[i].Width;
+                                                break;
+                                        }
+                                        switch (endShuffleType)
+                                        {
+                                            case ShuffleType.Simple:
+                                                endLaneIndex = bg[i].LaneIndex;
+                                                endWidth = bg[i].Width;
+                                                break;
+                                            default:
+                                                endLaneIndex = bg[i + 1].LaneIndex;
+                                                endWidth = bg[i + 1].Width;
+                                                break;
+                                        }
+
                                         // 描画時のコードコピペつらい
                                         var path = NoteGraphics.GetSlideBackgroundPath(
-                                            (UnitLaneWidth + BorderThickness) * bg[i].Width - BorderThickness,
-                                            (UnitLaneWidth + BorderThickness) * bg[i + 1].Width - BorderThickness,
-                                            (UnitLaneWidth + BorderThickness) * bg[i].LaneIndex,
+                                            (UnitLaneWidth + BorderThickness) * startWidth - BorderThickness,
+                                            (UnitLaneWidth + BorderThickness) * endWidth - BorderThickness,
+                                            (UnitLaneWidth + BorderThickness) * startLaneIndex,
                                             GetYPositionFromTick(bg[i].Tick),
-                                            (UnitLaneWidth + BorderThickness) * bg[i + 1].LaneIndex,
+                                            (UnitLaneWidth + BorderThickness) * endLaneIndex,
                                             GetYPositionFromTick(bg[i + 1].Tick));
                                         if (path.PathPoints.ContainsPoint(scorePos))
                                         {
@@ -1326,11 +1588,12 @@ namespace Ched.UI
                                                 int laneIndex = (int)(scorePos.X / (UnitLaneWidth + BorderThickness)) - note.StartWidth / 2;
                                                 laneIndex = Math.Min(Constants.LanesCount - note.StartWidth, Math.Max(0, laneIndex));
                                                 int laneIndexOffset = laneIndex - note.StartLaneIndex;
-                                                var newStep = new SlideStep.StepTap(note)
+                                                var newStep = new ShuffleStep(note)
                                                 {
                                                     TickOffset = tickOffset,
                                                     LaneIndexOffset = laneIndexOffset,
-                                                    IsVisible = IsNewSlideStepVisible
+                                                    IsVisible = IsNewSlideStepVisible,
+                                                    ShuffleType = ShuffleType.None
                                                 };
                                                 note.StepNotes.Add(newStep);
                                                 Invalidate();
@@ -1350,7 +1613,7 @@ namespace Ched.UI
                                 };
                                 newNoteLaneIndex = (int)(scorePos.X / (UnitLaneWidth + BorderThickness)) - slideStep.StartWidth / 2;
                                 slideStep.StartLaneIndex = Math.Min(Constants.LanesCount - slideStep.StartWidth, Math.Max(0, newNoteLaneIndex));
-                                var stepStep = new SlideStep.StepTap(slideStep) { TickOffset = (int)QuantizeTick, IsVisible = false };
+                                var stepStep = new ShuffleStep(slideStep) { TickOffset = (int)QuantizeTick, IsVisible = false };
                                 slideStep.StepNotes.Add(stepStep);
                                 Notes.Add(slideStep);
                                 Invalidate();
@@ -1387,19 +1650,38 @@ namespace Ched.UI
                     {
                         foreach (var step in slide.StepNotes.OrderByDescending(q => q.TickOffset))
                         {
+                            var stepShuffle = step as ShuffleStep;
+
                             RectangleF stepRect = GetClickableRectFromNotePosition(step.Tick, step.LaneIndex, step.Width);
-                            var stepWasShuffle = step.IsVisible;
+                            //var stepWasShuffle = step.IsVisible;
+                            var prevType = stepShuffle?.ShuffleType;
 
                             if (stepRect.Contains(scorePos))
                             {
                                 return stepTriggerShuffle(step)
                                     .Finally(() =>
                                     {
-                                        step.IsVisible = !step.IsVisible;
+                                        if (!(step is ShuffleStep)) return;
+                                        switch (stepShuffle.ShuffleType)
+                                        {
+                                            case ShuffleType.None:
+                                                stepShuffle.ShuffleType = ShuffleType.Simple;
+                                                break;
+                                            case ShuffleType.Simple:
+                                                stepShuffle.ShuffleType = ShuffleType.Complex;
+                                                break;
+                                            case ShuffleType.Complex:
+                                                stepShuffle.ShuffleType = ShuffleType.None;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        //step.IsVisible = !step.IsVisible;
                                         Cursor.Current = Cursors.Default;
-                                        if (stepWasShuffle == step.IsVisible) return;
+                                        //if (stepWasShuffle == step.IsVisible) return;
+                                        if (stepShuffle.ShuffleType == prevType) return;
                                         Invalidate();
-                                        OperationManager.Push(new StepSlideSwitchShuffleOperation(step));
+                                        OperationManager.Push(new ShuffleSwitchTypeOperation(stepShuffle));
                                     });
                             }
                         }
@@ -1947,13 +2229,38 @@ namespace Ched.UI
                 var visibleSteps = new SlideStep.TapBase[] { slide.StartNote }.Concat(slide.StepNotes.OrderBy(p => p.Tick)).ToList();
                 for (int i = 0; i < bg.Count - 1; i++)
                 {
-                    var note = ((SlideStep.StepTap)bg[i + 1]).IsVisible ? bg[i] : bg[i + 1]; // For SlideSteps, IsVisible flag actually corresponds to IsShuffle (TBD if this will change)
+                    var startShuffleType = (bg[i] as ShuffleStep)?.ShuffleType;
+                    var endShuffleType = (bg[i + 1] as ShuffleStep)?.ShuffleType;
+                    int startLaneIndex, startWidth, endLaneIndex, endWidth;
+                    switch (startShuffleType)
+                    {
+                        case ShuffleType.Complex:
+                            startLaneIndex = (bg[i] as ShuffleStep).EndLaneIndex;
+                            startWidth = (bg[i] as ShuffleStep).EndWidth;
+                            break; 
+                        default:
+                            startLaneIndex = bg[i].LaneIndex;
+                            startWidth = bg[i].Width;
+                            break;
+                    }
+                    switch (endShuffleType)
+                    {
+                        case ShuffleType.Simple:
+                            endLaneIndex = bg[i].LaneIndex;
+                            endWidth = bg[i].Width;
+                            break;
+                        default:
+                            endLaneIndex = bg[i + 1].LaneIndex;
+                            endWidth = bg[i + 1].Width;
+                            break;
+                    }
+
                     dc.DrawSlideStepBackground(
-                        (UnitLaneWidth + BorderThickness) * bg[i].Width - BorderThickness,
-                        (UnitLaneWidth + BorderThickness) * note.Width - BorderThickness,
-                        (UnitLaneWidth + BorderThickness) * bg[i].LaneIndex,
+                        (UnitLaneWidth + BorderThickness) * startWidth - BorderThickness,
+                        (UnitLaneWidth + BorderThickness) * endWidth - BorderThickness,
+                        (UnitLaneWidth + BorderThickness) * startLaneIndex,
                         GetYPositionFromTick(bg[i].Tick),
-                        (UnitLaneWidth + BorderThickness) * note.LaneIndex,
+                        (UnitLaneWidth + BorderThickness) * endLaneIndex,
                         GetYPositionFromTick(bg[i + 1].Tick) + 0.4f,
                         GetYPositionFromTick(visibleSteps.Last(p => p.Tick <= bg[i].Tick).Tick),
                         GetYPositionFromTick(visibleSteps.First(p => p.Tick >= bg[i + 1].Tick).Tick),
@@ -2084,21 +2391,38 @@ namespace Ched.UI
                 {
                     var step = orderedSteps.ElementAt(i);
                     if (!Editable && !step.IsVisible) continue;
-                    if (step.IsVisible) // For SlideSteps, this flag actually corresponds to IsShuffle (TBD if this will change)
+                    var shuffle = step as ShuffleStep;
+                    RectangleF rect = new RectangleF();
+                    RectangleF shuffleRect = new RectangleF();
+                    RectangleF connectorRect = new RectangleF();
+                    var shuffleType = shuffle?.ShuffleType;
+                    int prevLane, prevWidth, lane, width;
+                    switch (shuffleType)
                     {
-                        var prevLane = i == 0 ? slide.StartNote.LaneIndex : orderedSteps.ElementAt(i - 1).LaneIndex;
-                        var prevWidth = i == 0 ? slide.StartNote.Width : orderedSteps.ElementAt(i - 1).Width;
-                        var lane = Math.Min(step.LaneIndex, prevLane);
-                        var width = Math.Max(step.LaneIndex + step.Width, prevLane + prevWidth) - lane;
-                        RectangleF rect = GetRectFromNotePosition(step.Tick, lane, width);
-                        dc.DrawSlideStepStep(rect, slide.Side);
+                        case ShuffleType.Simple:
+                            prevLane = i == 0 ? slide.StartNote.LaneIndex : orderedSteps.ElementAt(i - 1).LaneIndex;
+                            prevWidth = i == 0 ? slide.StartNote.Width : orderedSteps.ElementAt(i - 1).Width;
+                            lane = Math.Min(step.LaneIndex, prevLane);
+                            width = Math.Max(step.LaneIndex + step.Width, prevLane + prevWidth) - lane;
+                            rect = GetRectFromNotePosition(step.Tick, lane, width);
+                            dc.DrawSlideStepStep(rect, slide.Side);
+                            break;
+                        case ShuffleType.Complex:
+                            lane = Math.Min(step.LaneIndex, shuffle.EndLaneIndex);
+                            width = Math.Max(step.LaneIndex + step.Width, shuffle.EndLaneIndex + shuffle.EndWidth) - lane;
+                            connectorRect = GetRectFromNotePosition(step.Tick, lane, width);
+                            dc.DrawSlideStepStep(connectorRect, slide.Side, true, true);
+                            rect = GetRectFromNotePosition(step.Tick, step.LaneIndex, step.Width);
+                            dc.DrawSlideStepStep(rect, slide.Side);
+                            shuffleRect = GetRectFromNotePosition(shuffle.Tick, shuffle.EndLaneIndex, shuffle.EndWidth);
+                            dc.DrawSlideStepStep(shuffleRect, slide.Side, true);
+                            break;
+                        case ShuffleType.None:
+                        default:
+                            rect = GetRectFromNotePosition(step.Tick, step.LaneIndex, step.Width);
+                            dc.DrawBorder(rect);
+                            break;
                     }
-                    else
-                    {
-                        RectangleF rect = GetRectFromNotePosition(step.Tick, step.LaneIndex, step.Width);
-                        dc.DrawBorder(rect);
-                    }
-
                 }
             }
 

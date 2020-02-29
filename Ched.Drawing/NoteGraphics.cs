@@ -250,9 +250,13 @@ namespace Ched.Drawing
             dc.Graphics.DrawTapSymbol(rect);
         }
 
-        public static void DrawSlideStepStep(this DrawingContext dc, RectangleF rect, Side side)
+        public static void DrawSlideStepStep(this DrawingContext dc, RectangleF rect, Side side, bool isShuffle = false, bool isConnector = false)
         {
-            dc.Graphics.DrawNote(rect, side == Side.Left ? dc.ColorProfile.SlideStepLeftColor : dc.ColorProfile.SlideStepRightColor, dc.ColorProfile.BorderColor);
+            dc.Graphics.DrawNote(rect, 
+                side == Side.Left 
+                ? isConnector ? dc.ColorProfile.SlideStepLeftConnectorColor :  dc.ColorProfile.SlideStepLeftColor 
+                : isConnector ? dc.ColorProfile.SlideStepRightConnectorColor : dc.ColorProfile.SlideStepRightColor, 
+                isShuffle ? dc.ColorProfile.ShuffleBorderColor : dc.ColorProfile.BorderColor);
         }
 
         /// <summary>

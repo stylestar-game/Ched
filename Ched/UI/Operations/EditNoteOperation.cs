@@ -810,5 +810,117 @@ namespace Ched.UI.Operations
             Note.IsVisible = !Note.IsVisible;
         }
     }
+
+    public class ShuffleSwitchTypeOperation : IOperation
+    {
+        public string Description { get { return "Convert to Simple Shuffle"; } }
+
+        protected ShuffleStep Note;
+
+        public ShuffleSwitchTypeOperation(ShuffleStep note)
+        {
+            Note = note;
+        }
+
+        public void Redo()
+        {
+            switch (Note.ShuffleType)
+            {
+                case ShuffleType.None:
+                    Note.ShuffleType = ShuffleType.Simple;
+                    break;
+                case ShuffleType.Simple:
+                    Note.ShuffleType = ShuffleType.Complex;
+                    break;
+                case ShuffleType.Complex:
+                    Note.ShuffleType = ShuffleType.None;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void Undo()
+        {
+            switch (Note.ShuffleType)
+            {
+                case ShuffleType.None:
+                    Note.ShuffleType = ShuffleType.Complex;
+                    break;
+                case ShuffleType.Simple:
+                    Note.ShuffleType = ShuffleType.None;
+                    break;
+                case ShuffleType.Complex:
+                    Note.ShuffleType = ShuffleType.Simple;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public class MoveEndSlideStepNoteOperation : IOperation
+    {
+        public string Description { get { return "SLIDE中継点の移動"; } }
+
+        public ShuffleStep StepNote { get; }
+        public NotePosition BeforePosition { get; }
+        public NotePosition AfterPosition { get; }
+
+        public MoveEndSlideStepNoteOperation(ShuffleStep note, NotePosition before, NotePosition after)
+        {
+            StepNote = note;
+            BeforePosition = before;
+            AfterPosition = after;
+        }
+
+        public void Redo()
+        {
+            StepNote.TickOffset = AfterPosition.TickOffset;
+            StepNote.SetEndPosition(AfterPosition.LaneIndexOffset, AfterPosition.WidthChange);
+        }
+
+        public void Undo()
+        {
+            StepNote.TickOffset = BeforePosition.TickOffset;
+            StepNote.SetEndPosition(BeforePosition.LaneIndexOffset, BeforePosition.WidthChange);
+        }
+
+        public struct NotePosition
+        {
+            public int TickOffset { get; }
+            public int LaneIndexOffset { get; }
+            public int WidthChange { get; }
+
+            public NotePosition(int tickOffset, int laneIndexOffset, int widthChange)
+            {
+                TickOffset = tickOffset;
+                LaneIndexOffset = laneIndexOffset;
+                WidthChange = widthChange;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null || !(obj is NotePosition)) return false;
+                NotePosition other = (NotePosition)obj;
+                return TickOffset == other.TickOffset && LaneIndexOffset == other.LaneIndexOffset && WidthChange == other.WidthChange;
+            }
+
+            public override int GetHashCode()
+            {
+                return TickOffset ^ LaneIndexOffset ^ WidthChange;
+            }
+
+            public static bool operator ==(NotePosition a, NotePosition b)
+            {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(NotePosition a, NotePosition b)
+            {
+                return !a.Equals(b);
+            }
+        }
+    }
     // End SSF
 }
