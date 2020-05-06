@@ -9,11 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Ched.Localization;
+
 namespace Ched.UI
 {
     public partial class SoundSourceSelector : UserControl
     {
-        public IEnumerable<string> SupportedExtensions => new string[] { ".wav", ".mp3" };
+        public IEnumerable<string> SupportedExtensions => new string[] { ".wav", ".mp3", ".ogg" };
 
         public SoundSource Value
         {
@@ -58,7 +60,7 @@ namespace Ched.UI
             var wildcards = SupportedExtensions.Select(p => "*" + p);
             var dialog = new OpenFileDialog()
             {
-                Filter = string.Format("音声ファイル({0})|{1}", string.Join(", ", wildcards), string.Join(";", wildcards))
+                Filter = FileFilterStrings.AudioFilter + string.Format("({0})|{1}", string.Join(", ", wildcards), string.Join(";", wildcards))
             };
             if (dialog.ShowDialog(this) == DialogResult.OK) filePathBox.Text = dialog.FileName;
         }

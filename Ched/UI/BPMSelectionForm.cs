@@ -12,12 +12,19 @@ namespace Ched.UI
 {
     public partial class BPMSelectionForm : Form
     {
-        public decimal BPM { get { return bpmBox.Value; } }
+        public decimal BPM
+        {
+            get { return bpmBox.Value; }
+            set
+            {
+                bpmBox.Value = value;
+                bpmBox.SelectAll();
+            }
+        }
 
         public BPMSelectionForm()
         {
             InitializeComponent();
-            Text = "BPMの変更";
             AcceptButton = buttonOK;
             CancelButton = buttonCancel;
             buttonOK.DialogResult = DialogResult.OK;
@@ -25,7 +32,7 @@ namespace Ched.UI
 
             bpmBox.DecimalPlaces = 0;
             bpmBox.Increment = 1;
-            bpmBox.Maximum = 999;
+            bpmBox.Maximum = 10000;
             bpmBox.Minimum = 10;
             bpmBox.Value = 120;
         }
