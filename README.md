@@ -1,39 +1,36 @@
 # Ched
 
-[![Build status](https://ci.appveyor.com/api/projects/status/pq1lght43m7ytlv1?svg=true)](https://ci.appveyor.com/project/paralleltree/ched)
+The chart editor for StyleStar.
 
-某スライドしてヘドバンする音ゲーの譜面エディタ
 
-既知のバグについては[Issues](https://github.com/paralleltree/Ched/issues)を参照してください。
+## Features
 
-## 機能とか
+  * Different zoom levels for time axis
+  * Custom note divisions (up to 1/1920 note)
+  * Chart preview
+  * BPM and time signature change support
+  * Exports to SSF for StyleStar (VRCChart for CustomRush coming soon)
 
-  * 時間軸ズーム
-  * カスタム音符指定(1920分音符まで)
-  * 再生プレビュー
-  * 譜面保管所風プレビュー
-  * BPM, ハイスピード, 拍子変更
-  * [Seaurchin Score File(sus形式)](https://seaurchin.kb10uy.org)へのエクスポート
+## Download 
 
-## ダウンロード
+Download the latest version from \#releases in the [Discord Server](https://discord.gg/sZ2jJKE)
 
-現在の最新版は[v2.6.1](https://github.com/paralleltree/Ched/releases)です。
+## How to Use
 
-## 使い方
+Look at the [wiki](https://github.com/stylestar-game/Ched/wiki)
 
-[Wiki](https://github.com/paralleltree/Ched/wiki)を参照してください。
-
-## スクリーンショット
+## Screenshot
 
 ![preview](https://user-images.githubusercontent.com/7324519/36943885-93922e32-1fd4-11e8-9042-688d36288a03.png)
 
-## フィードバックについて
-バグ報告などは[@paralleltree](https://twitter.com/paralleltree)までお願いします。
+## Feedback
 
-## ライセンス
-ChedはMITライセンスです。
+See [Issues](https://github.com/stylestar-game/Ched/issues) to report bugs.
 
-その他利用しているライブラリは次の通りです。
+## License
+Ched is MIT licensed.
+
+All of the other libraries follow:
 
 ### System.Reactive
 > Copyright (c) .NET Foundation and Contributors All Rights Reserved  
